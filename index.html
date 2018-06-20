@@ -18,12 +18,29 @@
 <body>
 
 <div id="firebaseui-auth-container"></div>
-<div id="loaderDiv">Loading…</div> <!-- @TODO -->
+<div id="loaderDiv">Loading…</div>
 
 <div id="mainDiv" hidden>
+	<div class="user">
+		<img id="userImg" width="50" title="" />
+		<button id="logoutButton">Log out</button>
+	</div>
+
+	<div class="workstations">
+		<div id="curWorkstationDiv"></div>
+
+		<div id="workstationSelectionDiv" hidden>
+			<ul id="workstationsUl">
+				<li id="allWorkstationsButton">(Any workstation)</li>
+			</ul>
+
+			<input type="text" name="newworkstation" placeholder="Add workstation" id="newWorkstationInput" />
+		</div>
+	</div>
+
 	<div class="boards">
 		<ul id="boardsUl">
-			<!-- <li id="allBoardsButton">(All)</li> // @TODO -->
+			<li id="allBoardsButton">(All)</li>
 		</ul>
 
 		<input type="text" name="newboard" placeholder="Add board" id="newBoardInput" />
@@ -31,7 +48,14 @@
 
 	<div id="tasksDiv" hidden>
 		<h1 id="taskH1"></h1>
-		<input type="text" name="newtask" placeholder="Add task" id="addTaskInput" />
+
+		<div>
+			<input type="text" name="newtask" placeholder="Add task" id="addTaskInput" />
+			<div id="taskWorkstationSelect" hidden>
+				<label><input type="radio" name="workstation" value="0" checked /> (any)</label>
+				<label><input type="radio" name="workstation" value="1" id="curWorkstationRadio" /><span></span></label>
+			</div>
+		</div>
 	</div>
 </div>
 

@@ -1,8 +1,12 @@
 
 var curUser;
 var db;
+
 var boards = [];
 var curBoard = null;
+
+var workstations = [];
+var curWorkstation = null;
 
 var config = {
 	apiKey: 'AIzaSyBPe-tuk-D9VeigholrdFkRdJ8sxe72zaY',
@@ -13,15 +17,31 @@ var config = {
 	//messagingSenderId: "<SENDER_ID>",
 };
 
+function ChangeWorkstation(workstation) {
+	curWorkstation = workstation;
+	if (curWorkstation === null) {
+		curWorkstationDiv.innerText = allWorkstationsButton.innerText;
+		taskWorkstationSelect.hidden = true;
+	} else {
+		curWorkstationDiv.innerText = curWorkstation.name;
+		taskWorkstationSelect.hidden = false;
+		curWorkstationRadio.nextSibling.innerText = curWorkstation.name;
+	}
+	workstationSelectionDiv.hidden = true;
+}
+
 firebase.initializeApp(config);
 
 firebase.auth().onAuthStateChanged(function(user) {
 	if (user) {
 		curUser = user;
+		userImg.src = curUser.photoURL;
 		loaderDiv.hidden = true;
 		mainDiv.hidden = false;
 
 	} else {
+
+		mainDiv.hidden = true;
 		
 		var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
@@ -35,12 +55,12 @@ firebase.auth().onAuthStateChanged(function(user) {
 				}
 			},
 			signInFlow: 'popup',
-			signInSuccessUrl: '/snow-todo/', // @TODO?
+			signInSuccessUrl: '/hanging-todo/', // @TODO?
 			signInOptions: [
 				firebase.auth.GoogleAuthProvider.PROVIDER_ID,
 				firebase.auth.EmailAuthProvider.PROVIDER_ID,
 			],
-			tosUrl: '/snow-todo/tos' // @TODO
+			tosUrl: '/hanging-todo/tos' // @TODO
 		};
 
 		ui.start('#firebaseui-auth-container', uiConfig); // The start method will wait until the DOM is loaded.
@@ -64,7 +84,46 @@ db.enablePersistence()
 	});
 
 function Go() {
-	db.collection('boards').onSnapshot(function(snapshot) {
+	if (curWorkstation === null)
+		ChangeWorkstation(curWorkstation);
+
+	// workstations --------------------------
+	db.collection('workstations').where('userid', '==', curUser.uid).onSnapshot(function(snapshot) {
+		snapshot.docChanges().forEach(function(change) {
+			if (change.type === "added") {
+				var doc = change.doc;
+				var data = doc.data();
+				var newEl = document.createElement('li');
+				var newWorkstation = {
+					name: data.name,
+					doc: doc,
+					el: newEl,
+				};
+
+				workstations.push(newWorkstation);
+
+				newEl.innerText = data.name;
+				newEl.onclick = function() {
+					ChangeWorkstation(newWorkstation);
+				};
+
+				workstationsUl.appendChild(newEl);
+			}
+			else if (change.type === "modified") {
+				// @TODO
+				console.log("Modified: ", change.doc.data());
+			}
+			else if (change.type === "removed") {
+				// @TODO
+				console.log("Removed: ", change.doc.data());
+			}
+		});
+	}, function(error) {
+		console.error('workstations:', error); // @TODO
+	});
+
+	// boards --------------------------
+	db.collection('boards').where('userid', '==', curUser.uid).onSnapshot(function(snapshot) {
 		snapshot.docChanges().forEach(function(change) {
 			if (change.type === "added") {
 				var doc = change.doc;
@@ -99,24 +158,25 @@ function Go() {
 			}
 			else if (change.type === "modified") {
 				// @TODO
-				//console.log("Modified: ", change.doc.data());
+				console.log("Modified: ", change.doc.data());
 			}
 			else if (change.type === "removed") {
 				// @TODO
-				//console.log("Removed: ", change.doc.data());
+				console.log("Removed: ", change.doc.data());
 			}
 		});
 	}, function(error) {
-		console.log(error); // @TODO
+		console.error('boards:', error); // @TODO
 	});
 }
 
-newBoardInput.onkeypress = function(e) {
+newWorkstationInput.onkeypress = function(e) {
 	if (e.keyCode === 13) {
-		var newName = newBoardInput.value;
-		newBoardInput.value = '';
-		db.collection('boards').add({
+		var newName = this.value;
+		this.value = '';
+		db.collection('workstations').add({
 			name: newName,
+			userid: curUser.uid,
 		})
 		.then(function(docRef) {
 			console.log(docRef);
@@ -124,9 +184,61 @@ newBoardInput.onkeypress = function(e) {
 	}
 };
 
+newBoardInput.onkeypress = function(e) {
+	if (e.keyCode === 13) {
+		var newName = this.value;
+		this.value = '';
+		db.collection('boards').add({
+				name: newName,
+				userid: curUser.uid,
+			})
+			.then(function(docRef) {
+				console.log(docRef);
+			});
+	}
+};
+
 addTaskInput.onkeypress = function(e) {
 	if (e.keyCode === 13) {
 		var newName = this.value;
 		this.value = '';
+
+		var newData = {
+			name: newName,
+			workstation: '',
+			userid: curUser.uid, // @TODO not necessary: permission for this
+		};
+
+		if (curWorkstation !== null && curWorkstationRadio.checked) {
+			newData.workstation = curWorkstation.name;
+		}
+
+		curBoard.doc.ref.collection('tasks').add(newData)
+			.then(function(docRef) {
+				console.log(docRef);
+			})
+			.catch(function(error) {
+				console.error("Error writing document: ", error);
+			});
 	}
 };
+
+logoutButton.onclick = function() {
+	firebase.auth().signOut().then(function() {
+		
+	}, function(error) {
+		console.error('signOut', error);
+	});
+};
+
+allWorkstationsButton.onclick = function() {
+	ChangeWorkstation(null);
+}
+
+curWorkstationDiv.onclick = function() {
+	if (workstationSelectionDiv.hidden) {
+		workstationSelectionDiv.hidden = false;
+	} else {
+		workstationSelectionDiv.hidden = true;
+	}
+}
