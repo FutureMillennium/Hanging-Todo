@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Hanging Todo by Zdeněk Gromnica</title>
+
+<!-- Firebase App is always required and must be first -->
+<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
+
+<!-- Add additional services you want to use -->
+<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
+<script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+</head>
+<body>
+
+<div id="firebaseui-auth-container"></div>
+<div id="loaderDiv">Loading…</div> <!-- @TODO -->
+
+<div id="mainDiv" hidden>
+	<div class="boards">
+		<ul id="boardsUl">
+			<!-- <li id="allBoardsButton">(All)</li> // @TODO -->
+		</ul>
+
+		<input type="text" name="newboard" placeholder="Add board" id="newBoardInput" />
+	</div>
+
+	<div id="tasksDiv" hidden>
+		<h1 id="taskH1"></h1>
+		<input type="text" name="newtask" placeholder="Add task" id="addTaskInput" />
+	</div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
