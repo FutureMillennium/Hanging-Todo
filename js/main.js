@@ -39,6 +39,15 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+function ContextMenuInit(el) {
+	el.FocusOut = function(e) {
+		if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== el) {
+			el.hidden = true;
+		}
+	};
+	el.addEventListener('focusout', el.FocusOut);
+}
+
 function CountTasks(board) {
 	var count = 0;
 	for (var i = 0; i < board.taskArray.length; i++) {
@@ -129,6 +138,20 @@ function ChangeBoard(thisBoard) {
 					newEl.onclick = function() {
 						InitRename(task);
 					};
+					newEl.oncontextmenu = function() {
+						deleteTask.onclick = function() {
+							task.doc.ref.delete()/*.then(function() {
+								//console.log("Document successfully deleted!");
+							})*/.catch(function(error) {
+								console.error("Error removing document: ", error);
+							});
+							workstationContextMenu.FocusOut(null);
+							return false;
+						};
+						taskContextMenu.hidden = false;
+						taskContextMenu.focus();
+						return false;
+					};
 
 					if (data.status !== 1
 						|| (data.workstation !== ''
@@ -156,8 +179,14 @@ function ChangeBoard(thisBoard) {
 					task.el.innerText = task.name;
 				}
 				else if (change.type === "removed") {
-					// @TODO
-					console.log("removed: ", change, change.doc.data());
+					var task = thisBoard.tasks[change.doc.id];
+
+					task.li.remove();
+
+					thisBoard.taskArray.splice(thisBoard.taskArray.indexOf(task), 1);
+					delete thisBoard.tasks[change.doc.id];
+
+					//console.log("removed: ", change, change.doc.data());
 				}
 			});
 
@@ -296,7 +325,7 @@ function Go() {
 						}).catch(function(error) {
 							console.error("Error removing document: ", error);
 						});
-						WorkstationContextMenuFocusOut(null);
+						workstationContextMenu.FocusOut(null);
 						return false;
 					};
 					workstationContextMenu.hidden = false;
@@ -319,7 +348,6 @@ function Go() {
 				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
-				var data = change.doc.data();
 				var workstation = workstations[change.doc.id];
 
 				if (curWorkstation === workstation) {
@@ -370,7 +398,7 @@ function Go() {
 						}).catch(function(error) {
 							console.error("Error removing document: ", error);
 						});
-						boardContextMenuFocusOut(null);
+						boardContextMenu.FocusOut(null);
 						return false;
 					};
 					boardContextMenu.hidden = false;
@@ -399,7 +427,6 @@ function Go() {
 				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
-				var data = change.doc.data();
 				var board = boards[change.doc.id];
 
 				board.el.remove();
@@ -494,19 +521,6 @@ curWorkstationDiv.onclick = function() {
 	}
 }
 
-function WorkstationContextMenuFocusOut(e) {
-	if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== workstationContextMenu) {
-		workstationContextMenu.hidden = true;
-	}
-}
-
-workstationContextMenu.addEventListener('focusout', WorkstationContextMenuFocusOut);
-
-
-function boardContextMenuFocusOut(e) { // @TODO @cleanup duplicate code
-	if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== boardContextMenu) {
-		boardContextMenu.hidden = true;
-	}
-}
-
-boardContextMenu.addEventListener('focusout', boardContextMenuFocusOut);
+ContextMenuInit(workstationContextMenu);
+ContextMenuInit(boardContextMenu);
+ContextMenuInit(taskContextMenu);
