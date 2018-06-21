@@ -1,4 +1,6 @@
 
+var appTitle;
+
 var curUser;
 var db;
 
@@ -6,7 +8,8 @@ var boards = {};
 var boardArray = [];
 var curBoard = null;
 
-var workstations = [];
+var workstations = {};
+var workstationArray = [];
 var curWorkstation = null;
 
 var config = {
@@ -18,9 +21,31 @@ var config = {
 	//messagingSenderId: "<SENDER_ID>",
 };
 
+function CountTasks(board) {
+	var count = 0;
+	for (var i = 0; i < board.taskArray.length; i++) {
+		var task = board.taskArray[i];
+		if (task.status === 0) {
+			count++;
+		}
+	}
+
+	if (count > 0) {
+		document.title = "(" + count + ") " + appTitle;
+	} else {
+		document.title = appTitle;
+	}
+}
+
 function NameBoard(board) {
 	board.el.innerText = board.name;
 	board.heading.innerText = board.name;
+}
+
+function NameWorkstation(workstation) {
+	workstation.el.innerText = workstation.name;
+	if (curWorkstation === workstation)
+		curWorkstationDiv.innerText = curWorkstation.name;
 }
 
 function ChangeWorkstation(workstation) {
@@ -29,12 +54,38 @@ function ChangeWorkstation(workstation) {
 		curWorkstationDiv.innerText = allWorkstationsButton.innerText;
 		taskWorkstationSelect.hidden = true;
 	} else {
-		curWorkstationDiv.innerText = curWorkstation.name;
+		NameWorkstation(workstation);
 		taskWorkstationSelect.hidden = false;
 		curWorkstationRadio.nextSibling.innerText = curWorkstation.name;
 	}
 	workstationSelectionDiv.hidden = true;
 }
+
+function InitRename(item) {
+	//item.el.contentEditable = true;
+	item.el.contentEditable = 'plaintext-only';
+	item.el.focus();
+	item.el.onkeydown = function(e) {
+		if (e.keyCode === 13) { // Enter
+			this.contentEditable = false;
+			item.doc.ref.set({
+				name: this.innerText,
+			}, {merge: true}); // @TODO @low onerror
+
+		} else if (e.keyCode === 27) { // Escape
+			this.contentEditable = false;
+			this.innerText = item.name;
+			return false;
+		}
+	};
+	item.el.onblur = function(e) {
+		this.contentEditable = false;
+	};
+}
+
+
+
+appTitle = document.title;
 
 firebase.initializeApp(config);
 
@@ -106,18 +157,28 @@ function Go() {
 					el: newEl,
 				};
 
-				workstations.push(newWorkstation);
+				workstations[doc.id] = newWorkstation;
+				workstationArray.push(newWorkstation);
 
-				newEl.innerText = data.name;
+				NameWorkstation(newWorkstation);
+				
 				newEl.onclick = function() {
+					if (newWorkstation === curWorkstation) {
+						InitRename(newWorkstation);
+						return;
+					}
 					ChangeWorkstation(newWorkstation);
 				};
 
 				workstationsUl.appendChild(newEl);
 			}
 			else if (change.type === "modified") {
-				// @TODO
-				console.log("Modified: ", change.doc.data());
+				var data = change.doc.data();
+				var workstation = workstations[change.doc.id];
+				workstation.name = data.name;
+				NameWorkstation(workstation);
+				
+				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
 				// @TODO
@@ -152,25 +213,7 @@ function Go() {
 
 				newEl.onclick = function() {
 					if (curBoard === thisBoard) {
-						//curBoard.el.contentEditable = true;
-						curBoard.el.contentEditable = 'plaintext-only';
-						curBoard.el.focus();
-						curBoard.el.onkeydown = function(e) {
-							if (e.keyCode === 13) { // Enter
-								this.contentEditable = false;
-								thisBoard.doc.ref.set({
-									name: this.innerText,
-								}, {merge: true}); // @TODO @low onerror
-
-							} else if (e.keyCode === 27) { // Escape
-								this.contentEditable = false;
-								this.innerText = thisBoard.name;
-								return false;
-							}
-						};
-						curBoard.el.onblur = function(e) {
-							this.contentEditable = false;
-						};
+						InitRename(thisBoard);
 						return;
 					}
 
@@ -236,6 +279,8 @@ function Go() {
 									console.log("removed: ", change, change.doc.data());
 								}
 							});
+
+							CountTasks(curBoard);
 						}, function(error) {
 							console.error('boards:', error); // @TODO
 						});
@@ -248,6 +293,8 @@ function Go() {
 					thisBoard.div.hidden = false;
 
 					tasksDiv.hidden = false;
+
+					CountTasks(curBoard);
 				};
 
 				boardsUl.appendChild(newEl);
