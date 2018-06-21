@@ -8,6 +8,7 @@ var db;
 var boards = {};
 var boardArray = [];
 var curBoard = null;
+var settingBoard;
 
 var workstations = {};
 var workstationArray = [];
@@ -77,6 +78,94 @@ function ChangeWorkstation(workstation) {
 		curWorkstationRadio.nextSibling.innerText = curWorkstation.name;
 	}
 	workstationSelectionDiv.hidden = true;
+}
+
+function ChangeBoard(thisBoard) {
+	if (curBoard === thisBoard) {
+		InitRename(thisBoard);
+		return;
+	}
+
+	SetSetting('board', (thisBoard === null ? null : thisBoard.name));
+
+	curBoard = thisBoard;
+
+	boardArray.forEach(function(board) {
+		board.el.classList.remove('selected');
+	});
+
+	thisBoard.el.classList.add('selected');
+
+	if (curBoard.subscription === null) {
+			curBoard.subscription = curBoard.doc.ref.collection('tasks').onSnapshot(function(snapshot) {
+			snapshot.docChanges().forEach(function(change) {
+				if (change.type === "added") {
+					var doc = change.doc;
+					var data = doc.data();
+					var newEl = document.createElement('li');
+					var task = {
+						name: data.name,
+						workstation: data.workstation,
+						status: data.status,
+						doc: doc,
+						el: newEl,
+					};
+
+					thisBoard.tasks[doc.id] = task;
+					thisBoard.taskArray.push(task);
+
+					var completeButton = document.createElement('button');
+					completeButton.innerText = 'Complete';
+					completeButton.onclick = function() {
+						task.doc.ref.set({
+							status: 1,
+						}, { merge: true });
+					};
+
+					var text = document.createTextNode(task.name);
+					newEl.appendChild(completeButton);
+					newEl.appendChild(text);
+
+					if (data.status === 1) {
+						//task.el.hidden = true;
+					} else {
+						thisBoard.ul.appendChild(newEl);
+					}
+				}
+				else if (change.type === "modified") {
+					console.log("modified: ", change, change.doc.data());
+
+					var task = thisBoard.tasks[change.doc.id];
+					var data = change.doc.data();
+					
+					if (data.status === 1) {
+						task.el.hidden = true;
+					}
+
+					task.name = data.name;
+					task.status = data.status;
+				}
+				else if (change.type === "removed") {
+					// @TODO
+					console.log("removed: ", change, change.doc.data());
+				}
+			});
+
+			CountTasks(curBoard);
+		}, function(error) {
+			console.error('boards:', error); // @TODO
+		});
+	}
+
+	boardArray.forEach(function(board) {
+		board.div.hidden = true;
+	});
+
+	thisBoard.div.hidden = false;
+
+	tasksDiv.hidden = false;
+
+	CountTasks(curBoard);
 }
 
 function InitRename(item) {
@@ -160,6 +249,7 @@ db.enablePersistence()
 
 function Go() {
 	settingWorkstation = GetSetting('workstation', null);
+	settingBoard = GetSetting('board', null);
 
 	if (settingWorkstation === null)
 		ChangeWorkstation(curWorkstation);
@@ -261,89 +351,7 @@ function Go() {
 				boardArray.push(thisBoard);
 
 				newEl.onclick = function() {
-					if (curBoard === thisBoard) {
-						InitRename(thisBoard);
-						return;
-					}
-
-					curBoard = thisBoard;
-
-					boardArray.forEach(function(board) {
-						board.el.classList.remove('selected');
-					});
-
-					newEl.classList.add('selected');
-
-					if (curBoard.subscription === null) {
-							curBoard.subscription = curBoard.doc.ref.collection('tasks').onSnapshot(function(snapshot) {
-							snapshot.docChanges().forEach(function(change) {
-								if (change.type === "added") {
-									var doc = change.doc;
-									var data = doc.data();
-									var newEl = document.createElement('li');
-									var task = {
-										name: data.name,
-										workstation: data.workstation,
-										status: data.status,
-										doc: doc,
-										el: newEl,
-									};
-
-									thisBoard.tasks[doc.id] = task;
-									thisBoard.taskArray.push(task);
-
-									var completeButton = document.createElement('button');
-									completeButton.innerText = 'Complete';
-									completeButton.onclick = function() {
-										task.doc.ref.set({
-											status: 1,
-										}, { merge: true });
-									};
-
-									var text = document.createTextNode(task.name);
-									newEl.appendChild(completeButton);
-									newEl.appendChild(text);
-
-									if (data.status === 1) {
-										//task.el.hidden = true;
-									} else {
-										thisBoard.ul.appendChild(newEl);
-									}
-								}
-								else if (change.type === "modified") {
-									console.log("modified: ", change, change.doc.data());
-
-									var task = thisBoard.tasks[change.doc.id];
-									var data = change.doc.data();
-									
-									if (data.status === 1) {
-										task.el.hidden = true;
-									}
-
-									task.name = data.name;
-									task.status = data.status;
-								}
-								else if (change.type === "removed") {
-									// @TODO
-									console.log("removed: ", change, change.doc.data());
-								}
-							});
-
-							CountTasks(curBoard);
-						}, function(error) {
-							console.error('boards:', error); // @TODO
-						});
-					}
-
-					boardArray.forEach(function(board) {
-						board.div.hidden = true;
-					});
-
-					thisBoard.div.hidden = false;
-
-					tasksDiv.hidden = false;
-
-					CountTasks(curBoard);
+					ChangeBoard(thisBoard);
 				};
 				newEl.oncontextmenu = function(e) {
 					deleteBoard.onclick = function() {
@@ -368,6 +376,10 @@ function Go() {
 				thisBoard.div.appendChild(thisBoard.heading);
 				thisBoard.div.appendChild(thisBoard.ul);
 				tasksDiv.appendChild(thisBoard.div);
+
+				if (settingBoard === thisBoard.name) {
+					ChangeBoard(thisBoard);
+				}
 			}
 			else if (change.type === "modified") {
 				var data = change.doc.data();
