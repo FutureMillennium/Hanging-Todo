@@ -18,6 +18,11 @@ var config = {
 	//messagingSenderId: "<SENDER_ID>",
 };
 
+function NameBoard(board) {
+	board.el.innerText = board.name;
+	board.heading.innerText = board.name;
+}
+
 function ChangeWorkstation(workstation) {
 	curWorkstation = workstation;
 	if (curWorkstation === null) {
@@ -145,7 +150,6 @@ function Go() {
 				boards[doc.id] = thisBoard;
 				boardArray.push(thisBoard);
 
-				newEl.innerText = data.name;
 				newEl.onclick = function() {
 					if (curBoard === thisBoard) {
 						//curBoard.el.contentEditable = true;
@@ -248,7 +252,7 @@ function Go() {
 
 				boardsUl.appendChild(newEl);
 
-				thisBoard.heading.innerText = thisBoard.name;
+				NameBoard(thisBoard);
 
 				thisBoard.div.hidden = true;
 				thisBoard.div.appendChild(thisBoard.heading);
@@ -257,7 +261,9 @@ function Go() {
 			}
 			else if (change.type === "modified") {
 				var data = change.doc.data();
-				boards[change.doc.id].el.innerText = data.name;
+				var board = boards[change.doc.id];
+				board.name = data.name;
+				NameBoard(board);
 				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
