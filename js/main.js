@@ -67,7 +67,7 @@ function NameWorkstation(workstation) {
 }
 
 function ChangeWorkstation(workstation) {
-	SetSetting('workstation', (workstation === null ? null : workstation.name));
+	SetSetting('workstation', (workstation === null ? '' : workstation.name));
 	curWorkstation = workstation;
 	if (curWorkstation === null) {
 		curWorkstationDiv.innerText = allWorkstationsButton.innerText;
@@ -86,7 +86,7 @@ function ChangeBoard(thisBoard) {
 		return;
 	}
 
-	SetSetting('board', (thisBoard === null ? null : thisBoard.name));
+	SetSetting('board', (thisBoard === null ? '' : thisBoard.name));
 
 	curBoard = thisBoard;
 
@@ -108,7 +108,8 @@ function ChangeBoard(thisBoard) {
 						workstation: data.workstation,
 						status: data.status,
 						doc: doc,
-						el: newEl,
+						li: newEl,
+						el: document.createElement('span'),
 					};
 
 					thisBoard.tasks[doc.id] = task;
@@ -122,13 +123,17 @@ function ChangeBoard(thisBoard) {
 						}, { merge: true }); // @TODO @low onerror
 					};
 
-					var text = document.createTextNode(task.name);
+					task.el.innerText = task.name;
 					newEl.appendChild(completeButton);
-					newEl.appendChild(text);
+					newEl.appendChild(task.el);
+					newEl.onclick = function() {
+						InitRename(task);
+					};
 
 					if (data.status !== 1
 						|| (data.workstation !== ''
-							&& curWorkstation.name !== data.workstation))
+							&& (curWorkstation === null
+								|| curWorkstation.name !== data.workstation)))
 					{
 						//task.el.hidden = true;
 					} else {
@@ -142,11 +147,13 @@ function ChangeBoard(thisBoard) {
 					var data = change.doc.data();
 					
 					if (data.status !== 1) {
-						task.el.hidden = true;
+						task.li.hidden = true;
 					}
 
 					task.name = data.name;
 					task.status = data.status;
+
+					task.el.innerText = task.name;
 				}
 				else if (change.type === "removed") {
 					// @TODO
@@ -251,10 +258,10 @@ db.enablePersistence()
 	});
 
 function Go() {
-	settingWorkstation = GetSetting('workstation', null);
-	settingBoard = GetSetting('board', null);
+	settingWorkstation = GetSetting('workstation', '');
+	settingBoard = GetSetting('board', '');
 
-	if (settingWorkstation === null)
+	if (settingWorkstation === '')
 		ChangeWorkstation(curWorkstation);
 
 	// workstations --------------------------
