@@ -118,27 +118,30 @@ function ChangeBoard(thisBoard) {
 					completeButton.innerText = 'Complete';
 					completeButton.onclick = function() {
 						task.doc.ref.set({
-							status: 1,
-						}, { merge: true });
+							status: 2,
+						}, { merge: true }); // @TODO @low onerror
 					};
 
 					var text = document.createTextNode(task.name);
 					newEl.appendChild(completeButton);
 					newEl.appendChild(text);
 
-					if (data.status === 1) {
+					if (data.status !== 1
+						|| (data.workstation !== ''
+							&& curWorkstation.name !== data.workstation))
+					{
 						//task.el.hidden = true;
 					} else {
 						thisBoard.ul.appendChild(newEl);
 					}
 				}
 				else if (change.type === "modified") {
-					console.log("modified: ", change, change.doc.data());
+					//console.log("modified: ", change, change.doc.data());
 
 					var task = thisBoard.tasks[change.doc.id];
 					var data = change.doc.data();
 					
-					if (data.status === 1) {
+					if (data.status !== 1) {
 						task.el.hidden = true;
 					}
 
@@ -447,7 +450,7 @@ addTaskInput.onkeypress = function(e) {
 		var newData = {
 			name: newName,
 			workstation: '',
-			status: 0,
+			status: 1,
 		};
 
 		if (curWorkstation !== null && curWorkstationRadio.checked) {
