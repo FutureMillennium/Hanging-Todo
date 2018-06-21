@@ -2,7 +2,8 @@
 var curUser;
 var db;
 
-var boards = [];
+var boards = {};
+var boardArray = [];
 var curBoard = null;
 
 var workstations = [];
@@ -133,32 +134,131 @@ function Go() {
 					name: data.name,
 					doc: doc,
 					el: newEl,
+					subscription: null,
+					div: document.createElement('div'),
+					heading: document.createElement('h2'),
+					ul: document.createElement('ul'),
+					tasks: {},
+					taskArray: [],
 				};
 
-				boards.push(thisBoard);
+				boards[doc.id] = thisBoard;
+				boardArray.push(thisBoard);
 
 				newEl.innerText = data.name;
 				newEl.onclick = function() {
-					if (curBoard === thisBoard)
+					if (curBoard === thisBoard) {
+						//curBoard.el.contentEditable = true;
+						curBoard.el.contentEditable = 'plaintext-only';
+						curBoard.el.focus();
+						curBoard.el.onkeydown = function(e) {
+							if (e.keyCode === 13) { // Enter
+								this.contentEditable = false;
+								thisBoard.doc.ref.set({
+									name: this.innerText,
+								}, {merge: true}); // @TODO @low onerror
+
+							} else if (e.keyCode === 27) { // Escape
+								this.contentEditable = false;
+								this.innerText = thisBoard.name;
+								return false;
+							}
+						};
+						curBoard.el.onblur = function(e) {
+							this.contentEditable = false;
+						};
 						return;
+					}
 
 					curBoard = thisBoard;
 
-					boards.forEach(function(board) {
+					boardArray.forEach(function(board) {
 						board.el.classList.remove('selected');
 					});
 
 					newEl.classList.add('selected');
 
-					taskH1.innerText = curBoard.name;
+					if (curBoard.subscription === null) {
+							curBoard.subscription = curBoard.doc.ref.collection('tasks').onSnapshot(function(snapshot) {
+							snapshot.docChanges().forEach(function(change) {
+								if (change.type === "added") {
+									var doc = change.doc;
+									var data = doc.data();
+									var newEl = document.createElement('li');
+									var task = {
+										name: data.name,
+										workstation: data.workstation,
+										status: data.status,
+										doc: doc,
+										el: newEl,
+									};
+
+									thisBoard.tasks[doc.id] = task;
+									thisBoard.taskArray.push(task);
+
+									var completeButton = document.createElement('button');
+									completeButton.innerText = 'Complete';
+									completeButton.onclick = function() {
+										task.doc.ref.set({
+											status: 1,
+										}, { merge: true });
+									};
+
+									var text = document.createTextNode(task.name);
+									newEl.appendChild(completeButton);
+									newEl.appendChild(text);
+
+									if (data.status === 1) {
+										//task.el.hidden = true;
+									} else {
+										thisBoard.ul.appendChild(newEl);
+									}
+								}
+								else if (change.type === "modified") {
+									console.log("modified: ", change, change.doc.data());
+
+									var task = thisBoard.tasks[change.doc.id];
+									var data = change.doc.data();
+									
+									if (data.status === 1) {
+										task.el.hidden = true;
+									}
+
+									task.name = data.name;
+									task.status = data.status;
+								}
+								else if (change.type === "removed") {
+									// @TODO
+									console.log("removed: ", change, change.doc.data());
+								}
+							});
+						}, function(error) {
+							console.error('boards:', error); // @TODO
+						});
+					}
+
+					boardArray.forEach(function(board) {
+						board.div.hidden = true;
+					});
+
+					thisBoard.div.hidden = false;
+
 					tasksDiv.hidden = false;
 				};
 
 				boardsUl.appendChild(newEl);
+
+				thisBoard.heading.innerText = thisBoard.name;
+
+				thisBoard.div.hidden = true;
+				thisBoard.div.appendChild(thisBoard.heading);
+				thisBoard.div.appendChild(thisBoard.ul);
+				tasksDiv.appendChild(thisBoard.div);
 			}
 			else if (change.type === "modified") {
-				// @TODO
-				console.log("Modified: ", change.doc.data());
+				var data = change.doc.data();
+				boards[change.doc.id].el.innerText = data.name;
+				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
 				// @TODO
@@ -206,7 +306,7 @@ addTaskInput.onkeypress = function(e) {
 		var newData = {
 			name: newName,
 			workstation: '',
-			userid: curUser.uid, // @TODO not necessary: permission for this
+			status: 0,
 		};
 
 		if (curWorkstation !== null && curWorkstationRadio.checked) {
