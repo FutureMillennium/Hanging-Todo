@@ -169,6 +169,23 @@ function Go() {
 					}
 					ChangeWorkstation(newWorkstation);
 				};
+				newEl.oncontextmenu = function(e) {
+					deleteWorkstation.onclick = function() {
+						newWorkstation.doc.ref.delete().then(function() {
+							//console.log("Document successfully deleted!");
+						}).catch(function(error) {
+							console.error("Error removing document: ", error);
+						});
+						workstationContextMenu.onfocusout();
+						return false;
+					};
+					workstationContextMenu.hidden = false;
+					workstationContextMenu.focus();
+					return false;
+				};
+				workstationContextMenu.onfocusout = function() {
+					this.hidden = true;
+				};
 
 				workstationsUl.appendChild(newEl);
 			}
@@ -181,8 +198,19 @@ function Go() {
 				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
-				// @TODO
-				console.log("Removed: ", change.doc.data());
+				var data = change.doc.data();
+				var workstation = workstations[change.doc.id];
+
+				if (curWorkstation === workstation) {
+					ChangeWorkstation(null);
+				}
+
+				workstation.el.remove();
+
+				workstationArray.splice(workstationArray.indexOf(workstation), 1);
+				delete workstations[change.doc.id];
+
+				//console.log("Removed: ", change.doc.data());
 			}
 		});
 	}, function(error) {
