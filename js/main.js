@@ -152,9 +152,9 @@ db.enablePersistence()
 	})
 	.catch(function(err) {
 		if (err.code == 'failed-precondition') {
-			console.log("Multiple tabs open, persistence can only be enabled in one tab at a a time."); // @TODO
+			console.error("Multiple tabs open, persistence can only be enabled in one tab at a a time."); // @TODO
 		} else if (err.code == 'unimplemented') {
-			console.log("The current browser does not support all of the features required to enable persistence."); // @TODO
+			console.error("The current browser does not support all of the features required to enable persistence."); // @TODO
 		}
 	});
 
@@ -345,6 +345,20 @@ function Go() {
 
 					CountTasks(curBoard);
 				};
+				newEl.oncontextmenu = function(e) {
+					deleteBoard.onclick = function() {
+						thisBoard.doc.ref.delete().then(function() {
+							//console.log("Document successfully deleted!");
+						}).catch(function(error) {
+							console.error("Error removing document: ", error);
+						});
+						boardContextMenuFocusOut(null);
+						return false;
+					};
+					boardContextMenu.hidden = false;
+					boardContextMenu.focus();
+					return false;
+				};
 
 				boardsUl.appendChild(newEl);
 
@@ -363,8 +377,21 @@ function Go() {
 				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
-				// @TODO
-				console.log("Removed: ", change.doc.data());
+				var data = change.doc.data();
+				var board = boards[change.doc.id];
+
+				board.el.remove();
+				board.div.remove();
+
+				if (board.subscription !== null)
+					board.subscription(); // unsubscribe
+
+				// @TODO if board is selected
+
+				boardArray.splice(boardArray.indexOf(board), 1);
+				delete boards[change.doc.id];
+
+				//console.log("Removed: ", change.doc.data());
 			}
 		});
 	}, function(error) {
@@ -381,7 +408,7 @@ newWorkstationInput.onkeypress = function(e) {
 			userid: curUser.uid,
 		})
 		.then(function(docRef) {
-			console.log(docRef);
+			//console.log(docRef);
 		});
 	}
 };
@@ -395,7 +422,7 @@ newBoardInput.onkeypress = function(e) {
 				userid: curUser.uid,
 			})
 			.then(function(docRef) {
-				console.log(docRef);
+				//console.log(docRef);
 			});
 	}
 };
@@ -417,7 +444,7 @@ addTaskInput.onkeypress = function(e) {
 
 		curBoard.doc.ref.collection('tasks').add(newData)
 			.then(function(docRef) {
-				console.log(docRef);
+				//console.log(docRef);
 			})
 			.catch(function(error) {
 				console.error("Error writing document: ", error);
@@ -447,8 +474,17 @@ curWorkstationDiv.onclick = function() {
 
 function WorkstationContextMenuFocusOut(e) {
 	if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== workstationContextMenu) {
-		this.hidden = true;
+		workstationContextMenu.hidden = true;
 	}
 }
 
 workstationContextMenu.addEventListener('focusout', WorkstationContextMenuFocusOut);
+
+
+function boardContextMenuFocusOut(e) { // @TODO @cleanup duplicate code
+	if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== boardContextMenu) {
+		boardContextMenu.hidden = true;
+	}
+}
+
+boardContextMenu.addEventListener('focusout', boardContextMenuFocusOut);
