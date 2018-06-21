@@ -21,6 +21,9 @@ var config = {
 	//messagingSenderId: "<SENDER_ID>",
 };
 
+
+
+
 function CountTasks(board) {
 	var count = 0;
 	for (var i = 0; i < board.taskArray.length; i++) {
@@ -176,7 +179,7 @@ function Go() {
 						}).catch(function(error) {
 							console.error("Error removing document: ", error);
 						});
-						workstationContextMenu.onfocusout(null);
+						WorkstationContextMenuFocusOut(null);
 						return false;
 					};
 					workstationContextMenu.hidden = false;
@@ -421,8 +424,10 @@ curWorkstationDiv.onclick = function() {
 	}
 }
 
-workstationContextMenu.addEventListener('focusout', function(e) {
-	if (e.relatedTarget === null || e.relatedTarget.parentElement !== workstationContextMenu) {
+function WorkstationContextMenuFocusOut(e) {
+	if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== workstationContextMenu) {
 		this.hidden = true;
 	}
-});
+}
+
+workstationContextMenu.addEventListener('focusout', WorkstationContextMenuFocusOut);
