@@ -1,5 +1,6 @@
 
 var appTitle;
+var APP_NAME = 'hanging-todo';
 
 var curUser;
 var db;
@@ -11,6 +12,7 @@ var curBoard = null;
 var workstations = {};
 var workstationArray = [];
 var curWorkstation = null;
+var settingWorkstation;
 
 var config = {
 	apiKey: 'AIzaSyBPe-tuk-D9VeigholrdFkRdJ8sxe72zaY',
@@ -23,6 +25,18 @@ var config = {
 
 
 
+function GetSetting(setting, defaultValue) {
+	var value = localStorage.getItem(APP_NAME + setting);
+	if (value === null) {
+		return defaultValue;
+	} else {
+		return value;
+	}
+}
+
+function SetSetting(setting, value) {
+	localStorage.setItem(APP_NAME + setting, value);
+}
 
 function CountTasks(board) {
 	var count = 0;
@@ -52,6 +66,7 @@ function NameWorkstation(workstation) {
 }
 
 function ChangeWorkstation(workstation) {
+	SetSetting('workstation', (workstation === null ? null : workstation.name));
 	curWorkstation = workstation;
 	if (curWorkstation === null) {
 		curWorkstationDiv.innerText = allWorkstationsButton.innerText;
@@ -144,7 +159,9 @@ db.enablePersistence()
 	});
 
 function Go() {
-	if (curWorkstation === null)
+	settingWorkstation = GetSetting('workstation', null);
+
+	if (settingWorkstation === null)
 		ChangeWorkstation(curWorkstation);
 
 	// workstations --------------------------
@@ -186,6 +203,10 @@ function Go() {
 					workstationContextMenu.focus();
 					return false;
 				};
+
+				if (settingWorkstation === newWorkstation.name) {
+					ChangeWorkstation(newWorkstation);
+				}
 
 				workstationsUl.appendChild(newEl);
 			}
