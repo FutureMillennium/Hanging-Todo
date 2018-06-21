@@ -176,15 +176,12 @@ function Go() {
 						}).catch(function(error) {
 							console.error("Error removing document: ", error);
 						});
-						workstationContextMenu.onfocusout();
+						workstationContextMenu.onfocusout(null);
 						return false;
 					};
 					workstationContextMenu.hidden = false;
 					workstationContextMenu.focus();
 					return false;
-				};
-				workstationContextMenu.onfocusout = function() {
-					this.hidden = true;
 				};
 
 				workstationsUl.appendChild(newEl);
@@ -423,3 +420,9 @@ curWorkstationDiv.onclick = function() {
 		workstationSelectionDiv.hidden = true;
 	}
 }
+
+workstationContextMenu.addEventListener('focusout', function(e) {
+	if (e.relatedTarget === null || e.relatedTarget.parentElement !== workstationContextMenu) {
+		this.hidden = true;
+	}
+});
