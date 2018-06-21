@@ -52,7 +52,7 @@ function CountTasks(board) {
 	var count = 0;
 	for (var i = 0; i < board.taskArray.length; i++) {
 		var task = board.taskArray[i];
-		if (task.status === 0) {
+		if (task.status === 1) {
 			count++;
 		}
 	}
