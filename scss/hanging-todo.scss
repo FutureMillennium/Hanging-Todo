@@ -9,6 +9,34 @@ html, body, input, button {
 html, body {
 	margin: 0;
 	padding: 0;
+	height: 100%;
+}
+
+#loaderDiv {
+	position: fixed;
+	display: flex;
+	background: white;
+	color: black;
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	place-content: center;
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+#firebaseui-auth-container {
+	width: 100%;
+	min-height: 100%;
+	display: flex;
+	align-items: center;
+	place-content: center;
+
+	&[hidden] {
+		display: none;
+	}
 }
 
 .topbar {
@@ -41,6 +69,7 @@ html, body {
 	max-width: 300px;
 	position: relative;
 	color: #666;
+	transition: background-color 0.1s, color 0.1s;
 
 	&::before {
 		color: #999;
@@ -87,6 +116,7 @@ html, body {
 		cursor: default;
 		margin: 0;
 		padding: 10px;
+		transition: background-color 0.1s, color 0.1s;
 
 		&:hover, &.menuon {
 			background: $actionColor;
@@ -131,6 +161,7 @@ html, body {
 		text-align: left;
 		padding-left: 25px;
 		border-radius: unset;
+		transition: background-color 0.1s, color 0.1s;
 
 		&:hover {
 			background: $actionColor;
@@ -196,6 +227,7 @@ html, body {
 		background: #eee;
 		border-radius: 10px 10px 0 0;
 		cursor: default;
+		transition: background-color 0.1s, color 0.1s;
 
 		&:hover, &.menuon {
 			background: $actionColor;
@@ -248,6 +280,7 @@ html, body {
 		background: #f1f1f1;
 		cursor: default;
 		border-radius: 10px;
+		transition: background-color 0.1s, color 0.1s;
 
 		&:hover {
 			background: #e2e2e2;
@@ -263,7 +296,7 @@ html, body {
 			height: 32px;
 			margin-right: 2px;
 			color: transparent;
-			border-color: #999;
+			border-color: #00000066;
 
 			&:hover, &:focus {
 				color: white;
@@ -320,6 +353,7 @@ button {
 	border-radius: 5px;
 	color: #666;
 	background: none;
+	transition: background-color 0.1s, color 0.1s;
 
 	&:hover, &:focus {
 		background: $actionColor;
@@ -333,6 +367,7 @@ input {
 	background: white;
 	border: 1px solid #bbb;
 	min-width: 200px;
+	transition: background-color 0.1s;
 
 	&:hover {
 		background: #f1f1f1;
@@ -349,6 +384,7 @@ label {
 	display: inline-block;
 	border-top: 2px solid $actionColor;
 	border-bottom: 2px solid $actionColor;
+	transition: border-color 0.2s;
 
 	&:first-child {
 		padding-left: 2px;
@@ -369,6 +405,7 @@ label span {
 	display: block;
 	padding: 5px 12px;
 	color: $actionColor;
+	transition: background-color 0.1s, color 0.1s;
 
 	&:hover {
 		color: white;

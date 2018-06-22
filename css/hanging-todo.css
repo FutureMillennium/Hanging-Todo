@@ -1,7 +1,13 @@
 @charset "UTF-8";
 html, body, input, button { font-family: sans-serif; font-size: 14px; }
 
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; height: 100%; }
+
+#loaderDiv { position: fixed; display: flex; background: white; color: black; width: 100%; height: 100%; align-items: center; place-content: center; }
+#loaderDiv[hidden] { display: none; }
+
+#firebaseui-auth-container { width: 100%; min-height: 100%; display: flex; align-items: center; place-content: center; }
+#firebaseui-auth-container[hidden] { display: none; }
 
 .topbar { overflow: hidden; }
 .topbar .select { background: #eee; }
@@ -9,7 +15,7 @@ html, body { margin: 0; padding: 0; }
 .user { float: right; margin-right: 10px; }
 .user img { margin-right: 5px; vertical-align: middle; max-height: 40px; }
 
-#curWorkstationDiv { cursor: default; padding: 10px; background: #ddd; height: 40px; box-sizing: border-box; line-height: 20px; width: 100%; max-width: 300px; position: relative; color: #666; }
+#curWorkstationDiv { cursor: default; padding: 10px; background: #ddd; height: 40px; box-sizing: border-box; line-height: 20px; width: 100%; max-width: 300px; position: relative; color: #666; transition: background-color 0.1s, color 0.1s; }
 #curWorkstationDiv::before { color: #999; position: absolute; content: '▼'; right: 10px; top: 10px; }
 #curWorkstationDiv:hover { background: #009688; color: white; }
 #curWorkstationDiv:hover::before { color: rgba(255, 255, 255, 0.5); }
@@ -18,14 +24,14 @@ html, body { margin: 0; padding: 0; }
 
 #workstationSelectionDiv { position: absolute; background: #ddd; width: 100%; max-width: 300px; margin-bottom: 15px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
 #workstationSelectionDiv ul { list-style: none; margin: 0; padding: 0; }
-#workstationSelectionDiv li { cursor: default; margin: 0; padding: 10px; }
+#workstationSelectionDiv li { cursor: default; margin: 0; padding: 10px; transition: background-color 0.1s, color 0.1s; }
 #workstationSelectionDiv li:hover, #workstationSelectionDiv li.menuon { background: #009688; color: white; }
 #workstationSelectionDiv li.selected { color: #666; background: #ccc; }
 #workstationSelectionDiv li:focus { margin: 4px; border: 1px solid #bbb; padding: 5px; cursor: text; background: white; box-sizing: border-box; color: black; }
 #workstationSelectionDiv input { width: calc(100% - 10px); box-sizing: border-box; padding: 5px; margin: 5px; }
 
 #workstationContextMenu, #boardContextMenu, #taskContextMenu { background: #eee; padding: 5px; position: absolute; min-width: 200px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
-#workstationContextMenu button, #boardContextMenu button, #taskContextMenu button { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; }
+#workstationContextMenu button, #boardContextMenu button, #taskContextMenu button { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; transition: background-color 0.1s, color 0.1s; }
 #workstationContextMenu button:hover, #boardContextMenu button:hover, #taskContextMenu button:hover { background: #009688; color: white; }
 #workstationContextMenu button.selected, #boardContextMenu button.selected, #taskContextMenu button.selected { background: #ddd; /*color: white;*/ position: relative; color: black; /*&:hover::before {
 	background: white;
@@ -37,7 +43,7 @@ html, body { margin: 0; padding: 0; }
 .boards { padding: 0 5px; border-bottom: 2px solid #009688; margin: 5px 0 10px; }
 .boards ul { display: inline-block; list-style: none; margin: 5px 0 0; padding: 0; }
 .boards li, .boards input { display: inline-block; color: #666; vertical-align: bottom; }
-.boards li { padding: 10px 15px; margin: 0 0 0 2px; background: #eee; border-radius: 10px 10px 0 0; cursor: default; }
+.boards li { padding: 10px 15px; margin: 0 0 0 2px; background: #eee; border-radius: 10px 10px 0 0; cursor: default; transition: background-color 0.1s, color 0.1s; }
 .boards li:hover, .boards li.menuon { background: #009688; color: white; }
 .boards li:focus { border: 1px solid #bbb; cursor: text; background: white; color: black; margin: -1px -1px -1px 1px; }
 .boards li.selected { margin: 0 0 -2px 2px; background: white; color: #009688; border: 2px solid #009688; border-bottom: none; }
@@ -48,10 +54,10 @@ html, body { margin: 0; padding: 0; }
 
 #tasksDiv { margin: 15px; }
 #tasksDiv ul { list-style: none; margin: 10px 0; padding: 0; }
-#tasksDiv li { margin: 5px 0; padding: 5px; background: #f1f1f1; cursor: default; border-radius: 10px; }
+#tasksDiv li { margin: 5px 0; padding: 5px; background: #f1f1f1; cursor: default; border-radius: 10px; transition: background-color 0.1s, color 0.1s; }
 #tasksDiv li:hover { background: #e2e2e2; }
 #tasksDiv li:focus, #tasksDiv li.selected { background: #bee0dd; outline: none; }
-#tasksDiv li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #999; }
+#tasksDiv li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #00000066; }
 #tasksDiv li button:hover, #tasksDiv li button:focus { color: white; border-color: #009688; }
 #tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; }
 #tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; }
@@ -63,20 +69,20 @@ html, body { margin: 0; padding: 0; }
 
 hr { margin: 5px 0; border: none; border-top: 1px solid #bbb; }
 
-button { border: 1px solid #666; padding: 5px 7px; border-radius: 5px; color: #666; background: none; }
+button { border: 1px solid #666; padding: 5px 7px; border-radius: 5px; color: #666; background: none; transition: background-color 0.1s, color 0.1s; }
 button:hover, button:focus { background: #009688; color: white; border-color: #009688; }
 
-input { padding: 5px; background: white; border: 1px solid #bbb; min-width: 200px; }
+input { padding: 5px; background: white; border: 1px solid #bbb; min-width: 200px; transition: background-color 0.1s; }
 input:hover { background: #f1f1f1; }
 input:focus { background: white; }
 
-label { margin: 0; padding: 2px 1px; display: inline-block; border-top: 2px solid #009688; border-bottom: 2px solid #009688; }
+label { margin: 0; padding: 2px 1px; display: inline-block; border-top: 2px solid #009688; border-bottom: 2px solid #009688; transition: border-color 0.2s; }
 label:first-child { padding-left: 2px; border-left: 2px solid #009688; border-radius: 8px 0 0 8px; }
 label:last-child { padding-right: 2px; border-right: 2px solid #009688; border-radius: 0 8px 8px 0; }
 
 input[type=radio] { display: none; /* -webkit-appearance: none; */ }
 
-label span { display: block; padding: 5px 12px; color: #009688; }
+label span { display: block; padding: 5px 12px; color: #009688; transition: background-color 0.1s, color 0.1s; }
 label span:hover { color: white; background: #009688; }
 
 input:checked + span { background: #009688; color: #fff; }

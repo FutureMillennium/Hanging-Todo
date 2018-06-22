@@ -340,6 +340,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 		var uiConfig = {
 			callbacks: {
 				signInSuccess: function(currentUser, credential, redirectUrl) {
+					document.getElementById('firebaseui-auth-container').hidden = true;
 					return true; // @TODO wat does this do??
 				},
 				uiShown: function() {
@@ -355,6 +356,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 			tosUrl: '/hanging-todo/tos' // @TODO
 		};
 
+		document.getElementById('firebaseui-auth-container').hidden = false;
 		ui.start('#firebaseui-auth-container', uiConfig); // The start method will wait until the DOM is loaded.
 		
 	}
