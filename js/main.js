@@ -547,7 +547,6 @@ function Go() {
 					hs: {},
 					tasks: {},
 					taskArray: [],
-					tasksByStatus: {},
 				};
 
 				boards[doc.id] = thisBoard;
