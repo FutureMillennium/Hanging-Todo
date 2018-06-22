@@ -14,6 +14,8 @@
 <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
 <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+
+<link type="text/css" rel="stylesheet" href="css/hanging-todo.css" />
 </head>
 <body>
 
@@ -59,7 +61,13 @@
 			</div>
 		</div>
 
-		<div id="taskContextMenu" tabindex="-1" hidden><button id="deleteTask">Delete</button></div>
+		<div id="taskContextMenu" tabindex="-1" hidden>
+			<h4>Status</h4>
+			<hr />
+			<h4>Workstation</h4>
+			<hr />
+			<button id="deleteTask">Delete</button>
+		</div>
 	</div>
 </div>
 

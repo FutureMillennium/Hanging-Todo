@@ -15,6 +15,12 @@ var workstationArray = [];
 var curWorkstation = null;
 var settingWorkstation;
 
+var workstationButtons = {};
+
+var statusButtons = {};
+
+var selection = null;
+
 var config = {
 	apiKey: 'AIzaSyBPe-tuk-D9VeigholrdFkRdJ8sxe72zaY',
 	authDomain: 'hanging-todo.firebaseapp.com',
@@ -39,6 +45,33 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+function SetClass(els, className) {
+	for (var i in els) {
+		els[i].className = className;
+	}
+}
+
+function AddWorkstationButton(name, title) {
+	var button = document.createElement('button');
+	button.innerText = (title === undefined ? name : title);
+	button.onclick = function() {
+		selection.doc.ref.set({
+			workstation: name,
+		}, { merge: true }); // @TODO @low onerror
+		button.parentElement.hidden = true;
+	};
+
+	workstationButtons[name] = button;
+
+	taskContextMenu.insertBefore(button, taskContextMenu.children[taskContextMenu.children.length - 2]);
+}
+
+function SetTaskStatus(task, status) {
+	task.doc.ref.set({
+		status: status,
+	}, { merge: true }); // @TODO @low onerror
+}
+
 function ContextMenuInit(el) {
 	el.FocusOut = function(e) {
 		if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== el) {
@@ -46,6 +79,13 @@ function ContextMenuInit(el) {
 		}
 	};
 	el.addEventListener('focusout', el.FocusOut);
+}
+
+function ShowContextMenu(el, e) {
+	el.style.top = e.y + 'px';
+	el.style.left = e.x + 'px';
+	el.hidden = false;
+	el.focus();
 }
 
 function CountTasks(board) {
@@ -127,9 +167,7 @@ function ChangeBoard(thisBoard) {
 					var completeButton = document.createElement('button');
 					completeButton.innerText = 'Complete';
 					completeButton.onclick = function() {
-						task.doc.ref.set({
-							status: 2,
-						}, { merge: true }); // @TODO @low onerror
+						SetTaskStatus(task, 2);
 					};
 
 					task.el.innerText = task.name;
@@ -138,7 +176,7 @@ function ChangeBoard(thisBoard) {
 					newEl.onclick = function() {
 						InitRename(task);
 					};
-					newEl.oncontextmenu = function() {
+					newEl.oncontextmenu = function(e) {
 						deleteTask.onclick = function() {
 							task.doc.ref.delete()/*.then(function() {
 								//console.log("Document successfully deleted!");
@@ -148,8 +186,15 @@ function ChangeBoard(thisBoard) {
 							workstationContextMenu.FocusOut(null);
 							return false;
 						};
-						taskContextMenu.hidden = false;
-						taskContextMenu.focus();
+						selection = task;
+
+						SetClass(statusButtons, '');
+						statusButtons[task.status].className = 'selected';
+
+						SetClass(workstationButtons, '');
+						workstationButtons[task.workstation].className = 'selected';
+
+						ShowContextMenu(taskContextMenu, e);
 						return false;
 					};
 
@@ -328,14 +373,15 @@ function Go() {
 						workstationContextMenu.FocusOut(null);
 						return false;
 					};
-					workstationContextMenu.hidden = false;
-					workstationContextMenu.focus();
+					ShowContextMenu(workstationContextMenu, e);
 					return false;
 				};
 
 				if (settingWorkstation === newWorkstation.name) {
 					ChangeWorkstation(newWorkstation);
 				}
+
+				AddWorkstationButton(newWorkstation.name);
 
 				workstationsUl.appendChild(newEl);
 			}
@@ -401,8 +447,7 @@ function Go() {
 						boardContextMenu.FocusOut(null);
 						return false;
 					};
-					boardContextMenu.hidden = false;
-					boardContextMenu.focus();
+					ShowContextMenu(boardContextMenu, e);
 					return false;
 				};
 
@@ -524,3 +569,24 @@ curWorkstationDiv.onclick = function() {
 ContextMenuInit(workstationContextMenu);
 ContextMenuInit(boardContextMenu);
 ContextMenuInit(taskContextMenu);
+
+function CreateStatusButton(status, name) {
+	var button = document.createElement('button');
+	button.innerText = name;
+	button.onclick = function() {
+		SetTaskStatus(selection, status);
+		button.parentElement.hidden = true;
+	};
+
+	statusButtons[status] = button;
+
+	taskContextMenu.insertBefore(button, taskContextMenu.children[taskContextMenu.children.length - 4]);
+}
+
+CreateStatusButton(1, "Immediate");
+CreateStatusButton(0, "Extra");
+CreateStatusButton(2, "Done");
+CreateStatusButton(3, "Archive");
+CreateStatusButton(-1, "Cancelled");
+
+AddWorkstationButton('', '(any)');
