@@ -203,13 +203,16 @@ function ChangeBoard(thisBoard) {
 
 					if (task.workstation !== '') {
 						var tagEl = document.createElement('i');
-						tagEl.innerText = workstations[task.workstation].name;
-						newEl.appendChild(tagEl);
+						if (workstations.hasOwnProperty(task.workstation)) {
+							tagEl.innerText = workstations[task.workstation].name;
+							newEl.appendChild(tagEl);
+						}
 					}
 
 					newEl.onclick = function() {
 						if (document.activeElement === task.li && selection === task) {
-							InitRename(task);
+							task.li.classList.add('selected');
+							InitRename(task, function() { task.li.classList.remove('selected'); });
 						} else {
 							selection = task;
 						}
@@ -296,7 +299,7 @@ function ChangeBoard(thisBoard) {
 	CountTasks(curBoard);
 }
 
-function InitRename(item) {
+function InitRename(item, afterFn) {
 	//item.el.contentEditable = true;
 	item.el.contentEditable = 'plaintext-only';
 	item.el.focus();
@@ -306,15 +309,22 @@ function InitRename(item) {
 			item.doc.ref.set({
 				name: this.innerText,
 			}, {merge: true}); // @TODO @low onerror
+			if (afterFn !== undefined)
+				afterFn();
+			return false;
 
 		} else if (e.keyCode === 27) { // Escape
 			this.contentEditable = false;
 			this.innerText = item.name;
+			if (afterFn !== undefined)
+				afterFn();
 			return false;
 		}
 	};
 	item.el.onblur = function(e) {
 		this.contentEditable = false;
+		if (afterFn !== undefined)
+			afterFn();
 	};
 }
 
