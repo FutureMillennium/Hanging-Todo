@@ -2,6 +2,9 @@
 var appTitle;
 var APP_NAME = 'hanging-todo';
 
+var statuses = [1, 0, 2, 3, -1];
+var statusNames = {'1': "Immediate", '0': "Optional", '2': "Done", '3': "Archived", '-1': "Cancelled"};
+
 var curUser;
 var db;
 
@@ -47,6 +50,16 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+
+function UpdateTaskWorkstation(task) {
+	if (task.workstation !== ''
+		&& (curWorkstation === null || curWorkstation.id !== task.workstation))
+	{
+		task.li.hidden = true;
+	} else {
+		task.li.hidden = false;
+	}
+}
 
 function UpdateTask(task) {
 	if (task.workstation !== '' && workstations.hasOwnProperty(task.workstation)) {
@@ -140,7 +153,10 @@ function CountTasks(board) {
 	for (var i = 0; i < board.taskArray.length; i++) {
 		var task = board.taskArray[i];
 		if (task.status === 1) {
-			count++;
+			if (task.workstation !== '' 
+				&& (curWorkstation === null || curWorkstation.id !== task.workstation)) {
+			} else {
+				count++; }
 		}
 	}
 
@@ -180,6 +196,11 @@ function ChangeWorkstation(workstation) {
 		taskWorkstationSelect.hidden = false;
 		curWorkstationRadio.nextSibling.innerText = curWorkstation.name;
 		workstation.el.classList.add('selected');
+	}
+
+	if (curBoard !== null) for (var i in curBoard.taskArray) {
+		var task = curBoard.taskArray[i];
+		UpdateTaskWorkstation(task);
 	}
 
 	CloseWorkstationSelect();
@@ -224,7 +245,11 @@ function ChangeBoard(thisBoard) {
 					var completeButton = document.createElement('button');
 					completeButton.innerText = "✓";
 					completeButton.onclick = function(e) {
-						SetTaskStatus(task, 2);
+						if (task.status > 1) {
+							SetTaskStatus(task, 1);
+						} else {
+							SetTaskStatus(task, 2);
+						}
 						e.stopPropagation();
 						return false;
 					};
@@ -273,15 +298,8 @@ function ChangeBoard(thisBoard) {
 							selection = null;
 					});
 
-					if (data.status !== 1
-						|| (data.workstation !== ''
-							&& (curWorkstation === null
-								|| curWorkstation.id !== data.workstation)))
-					{
-						//task.el.hidden = true;
-					} else {
-						thisBoard.ul.appendChild(newEl);
-					}
+					UpdateTaskWorkstation(task);
+					thisBoard.uls[task.status].appendChild(newEl);
 				}
 				else if (change.type === "modified") {
 					//console.log("modified: ", change, change.doc.data());
@@ -289,8 +307,8 @@ function ChangeBoard(thisBoard) {
 					var task = thisBoard.tasks[change.doc.id];
 					var data = change.doc.data();
 					
-					if (data.status !== 1) {
-						task.li.hidden = true;
+					if (task.status !== data.status) {
+						thisBoard.uls[data.status].appendChild(task.li);
 					}
 
 					task.name = data.name;
@@ -525,9 +543,11 @@ function Go() {
 					subscription: null,
 					div: document.createElement('div'),
 					heading: document.createElement('h2'),
-					ul: document.createElement('ul'),
+					uls: {},
+					hs: {},
 					tasks: {},
 					taskArray: [],
+					tasksByStatus: {},
 				};
 
 				boards[doc.id] = thisBoard;
@@ -569,7 +589,35 @@ function Go() {
 				thisBoard.div.hidden = true;
 				thisBoard.heading.hidden = true;
 				thisBoard.div.appendChild(thisBoard.heading);
-				thisBoard.div.appendChild(thisBoard.ul);
+
+				for (var i in statuses) {
+					var si = statuses[i];
+					if (si !== 1) {
+						thisBoard.hs[si] = document.createElement('h3');
+						thisBoard.hs[si].innerText = statusNames[si];
+						thisBoard.hs[si].className = statusNames[si];
+						if (si === 0)
+							thisBoard.hs[si].classList.add('expanded');
+						thisBoard.div.appendChild(thisBoard.hs[si]);
+
+						thisBoard.hs[si].onclick = function() {
+							if (this.nextSibling.hidden) {
+								this.classList.add('expanded');
+								this.nextSibling.hidden = false;
+							} else {
+								this.classList.remove('expanded');
+								this.nextSibling.hidden = true;
+							}
+						};
+					}
+
+					thisBoard.uls[si] = document.createElement('ul');
+					thisBoard.uls[si].className = statusNames[si];
+					if (si > 1 || si < 0) {
+						thisBoard.uls[si].hidden = true; }
+					thisBoard.div.appendChild(thisBoard.uls[si]);
+				}
+
 				tasksDiv.appendChild(thisBoard.div);
 
 				if (settingBoard === thisBoard.doc.id) {
@@ -682,7 +730,7 @@ curWorkstationDiv.onclick = function() {
 	}
 }
 
-allBoardsButton.oncontextmenu = function() { return false; };
+//allBoardsButton.oncontextmenu = function() { return false; };
 
 ContextMenuInit(workstationContextMenu);
 ContextMenuInit(boardContextMenu);
@@ -701,11 +749,10 @@ function CreateStatusButton(status, name) {
 	taskContextMenu.insertBefore(button, taskContextMenu.children[taskContextMenu.children.length - 4]);
 }
 
-CreateStatusButton(1, "Immediate");
-CreateStatusButton(0, "Optional");
-CreateStatusButton(2, "Done");
-CreateStatusButton(3, "Archive");
-CreateStatusButton(-1, "Cancelled");
+for (var i in statuses) {
+	var si = statuses[i];
+	CreateStatusButton(si, statusNames[si]);
+}
 
 AddWorkstationButton('', '(any)');
 

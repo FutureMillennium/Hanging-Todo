@@ -1,7 +1,7 @@
 @charset "UTF-8";
 html, body, input, button { font-family: sans-serif; font-size: 14px; }
 
-html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; }
+html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; background: white; color: black; }
 
 #loaderDiv { position: fixed; display: flex; background: white; color: black; width: 100%; height: 100%; align-items: center; place-content: center; }
 #loaderDiv[hidden] { display: none; }
@@ -16,7 +16,7 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 .user img { margin-right: 5px; vertical-align: middle; max-height: 40px; }
 
 #curWorkstationDiv { cursor: default; padding: 10px; background: #ddd; height: 40px; box-sizing: border-box; line-height: 20px; width: 100%; max-width: 300px; position: relative; color: #666; transition: background-color 0.1s, color 0.1s; }
-#curWorkstationDiv::before { color: #999; position: absolute; content: '▼'; right: 10px; top: 10px; }
+#curWorkstationDiv::before { color: #999; position: absolute; content: '▼'; right: 12px; top: 10px; }
 #curWorkstationDiv:hover { background: #009688; color: white; }
 #curWorkstationDiv:hover::before { color: rgba(255, 255, 255, 0.5); }
 #curWorkstationDiv.expanded { background: #aaa; color: #666; }
@@ -38,7 +38,7 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 }*/ }
 #workstationContextMenu button.selected::before, #boardContextMenu button.selected::before, #taskContextMenu button.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
 #workstationContextMenu button.delete:hover, #boardContextMenu button.delete:hover, #taskContextMenu button.delete:hover { background: #BF3C25; }
-#workstationContextMenu h4, #boardContextMenu h4, #taskContextMenu h4 { margin: 5px 5px; padding: 0; font-size: 11px; font-weight: normal; color: #666; }
+#workstationContextMenu h4, #boardContextMenu h4, #taskContextMenu h4 { margin: 5px 5px; padding: 0; font-size: 11px; font-weight: normal; color: #999; }
 
 .boards { padding: 0 5px; border-bottom: 2px solid #009688; margin: 5px 0 10px; }
 .boards ul { display: inline-block; list-style: none; margin: 5px 0 0; padding: 0; }
@@ -53,15 +53,26 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 #taskWorkstationSelect { display: inline-block; }
 
 #tasksDiv { margin: 15px; }
-#tasksDiv ul { list-style: none; margin: 10px 0; padding: 0; }
+#tasksDiv .addtask { margin-bottom: 15px; }
+#tasksDiv ul { list-style: none; margin: 0; padding: 0; }
+#tasksDiv ul.Done li, #tasksDiv ul.Archived li { color: #00000066; background: #f9f9f9; }
+#tasksDiv ul.Done li button, #tasksDiv ul.Archived li button { border-color: #00000033; color: black; }
+#tasksDiv ul.Cancelled li { color: #00000055; background: #fafafa; }
+#tasksDiv ul.Cancelled li button { border-color: #00000033; }
 #tasksDiv li { margin: 5px 0; padding: 5px; background: #f1f1f1; cursor: default; border-radius: 10px; transition: background-color 0.1s, color 0.1s; }
-#tasksDiv li:hover { background: #e2e2e2; }
-#tasksDiv li:focus, #tasksDiv li.selected { background: #bee0dd; outline: none; }
+#tasksDiv li:hover { background: #e2e2e2 !important; }
+#tasksDiv li:focus, #tasksDiv li.selected { background: #bee0dd !important; outline: none; }
 #tasksDiv li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #00000066; }
-#tasksDiv li button:hover, #tasksDiv li button:focus { color: white; border-color: #009688; }
+#tasksDiv li button:hover, #tasksDiv li button:focus { color: white !important; border-color: #009688; }
 #tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }
-#tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; }
+#tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; color: black; }
 #tasksDiv li i { font-size: 0.8em; color: rgba(0, 0, 0, 0.5); display: inline-block; background: #00968820; padding: 5px; font-style: normal; border-radius: 5px; vertical-align: middle; margin-left: 5px; }
+#tasksDiv h3 { font-size: 1.0em; margin: 15px 0 5px; padding: 7px; }
+#tasksDiv h3.Done, #tasksDiv h3.Archived { color: #666; }
+#tasksDiv h3.Cancelled { color: #999; }
+#tasksDiv h3:hover { background: #e2e2e2; }
+#tasksDiv h3::after { display: inline-block; margin-left: 5px; font-size: 9px; content: '▼'; line-height: 18px; border: 1px solid #999; color: #666; text-align: center; border-radius: 12px; width: 20px; height: 20px; box-sizing: border-box; vertical-align: middle; }
+#tasksDiv h3.expanded::after { content: '▲'; }
 
 #addTaskInput { padding: 10px 10px 10px 45px; min-width: 500px; margin-right: 7px; }
 

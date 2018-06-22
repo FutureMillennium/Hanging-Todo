@@ -51,7 +51,7 @@
 	</div>
 
 	<div class="boards">
-		<ul id="boardsUl"><li id="allBoardsButton">(All)</li></ul>
+		<ul id="boardsUl"><!-- <li id="allBoardsButton">(All)</li> --></ul>
 
 		<div id="boardContextMenu" tabindex="-1" hidden>
 			<button id="editBoard">Rename</button>
@@ -63,7 +63,7 @@
 	</div>
 
 	<div id="tasksDiv" hidden>
-		<div>
+		<div class="addtask">
 			<input type="text" name="newtask" placeholder="Add task" id="addTaskInput" />
 			<div id="taskWorkstationSelect" hidden class="default" title="Workstation for this task">
 				<label><input type="radio" name="workstation" value="0" checked class="default" /><span> (any)</span></label><label><input type="radio" name="workstation" value="1" id="curWorkstationRadio" /><span></span></label>
