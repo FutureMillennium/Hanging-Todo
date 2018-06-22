@@ -220,6 +220,7 @@ function ChangeBoard(thisBoard) {
 
 					task.name = data.name;
 					task.status = data.status;
+					task.workstation = data.workstation;
 
 					task.el.innerText = task.name;
 				}
