@@ -263,9 +263,11 @@ html, body {
 			height: 32px;
 			margin-right: 2px;
 			color: transparent;
+			border-color: #999;
 
-			&:hover {
+			&:hover, &:focus {
 				color: white;
+				border-color: $actionColor;
 			}
 		}
 
@@ -307,7 +309,7 @@ button {
 	color: #666;
 	background: none;
 
-	&:hover {
+	&:hover, &:focus {
 		background: $actionColor;
 		color: white;
 		border-color: $actionColor;
