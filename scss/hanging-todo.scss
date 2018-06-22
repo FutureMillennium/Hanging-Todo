@@ -50,14 +50,6 @@ html, body {
 		top: 10px;
 	}
 
-	&.expanded {
-		background: #ccc;
-
-		&::before {
-			content: '▲';
-		}
-	}
-
 	&:hover {
 		background: $actionColor;
 		color: white;
@@ -66,10 +58,22 @@ html, body {
 			color: rgba(255, 255, 255, 0.5);
 		}
 	}
+
+	&.expanded {
+		background: #aaa;
+		color: #666;
+
+		&::before {
+			content: '▲';
+			color: #666;
+		}
+	}
 }
 
 #workstationSelectionDiv {
+	position: absolute;
 	background: #ddd;
+	width: 100%;
 	max-width: 300px;
 	margin-bottom: 15px;
 	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
