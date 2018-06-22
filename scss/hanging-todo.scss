@@ -1,6 +1,14 @@
 $deleteColor: #BF3C25;
 $actionColor: #009688;
 
+@mixin allowSelect {
+	-moz-user-select: text;
+	-webkit-user-select: text;
+	-ms-user-select: element;
+	user-select: text;
+	user-select: contain;
+}
+
 html, body, input, button {
 	font-family: sans-serif;
 	font-size: 14px;
@@ -9,7 +17,11 @@ html, body, input, button {
 html, body {
 	margin: 0;
 	padding: 0;
-	height: 100%;
+	min-height: 100%;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 #loaderDiv {
@@ -126,6 +138,7 @@ html, body {
 		&.selected {
 			color: #666;
 			background: #ccc;
+			@include allowSelect;
 		}
 		&:focus {
 			margin: 4px;
@@ -163,7 +176,7 @@ html, body {
 		border-radius: unset;
 		transition: background-color 0.1s, color 0.1s;
 
-		&:hover {
+		&:hover, &:focus {
 			background: $actionColor;
 			color: white;
 		}
@@ -228,6 +241,7 @@ html, body {
 		border-radius: 10px 10px 0 0;
 		cursor: default;
 		transition: background-color 0.1s, color 0.1s;
+		@include allowSelect;
 
 		&:hover, &.menuon {
 			background: $actionColor;
@@ -308,6 +322,7 @@ html, body {
 			display: inline-block;
 			padding: 7px;
 			border: 1px solid transparent;
+			@include allowSelect;
 
 			&:focus {
 				cursor: text;

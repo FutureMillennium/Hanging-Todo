@@ -47,6 +47,23 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+
+function UpdateTask(task) {
+	if (task.workstation !== '' && workstations.hasOwnProperty(task.workstation)) {
+		if (task.tag === null) {
+			var tagEl = document.createElement('i');
+			task.li.appendChild(tagEl);
+			task.tag = tagEl;
+		}
+
+		task.tag.innerText = workstations[task.workstation].name;
+
+	} else if (task.tag !== null) {
+		task.tag.remove();
+		task.tag = null;
+	}
+}
+
 function CloseWorkstationSelect() {
 	curWorkstationDiv.className = '';
 	workstationSelectionDiv.hidden = true;
@@ -81,7 +98,7 @@ function SetTaskStatus(task, status) {
 
 function ContextMenuInit(el) {
 	el.FocusOut = function(e) {
-		if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== el) {
+		if (e === null || e.relatedTarget === null || (e.relatedTarget !== el && el.contains(e.relatedTarget) === false)) {
 			el.hidden = true;
 			if (lastWorkstation !== null)
 				lastWorkstation.el.classList.remove('menuon');
@@ -97,9 +114,24 @@ function ContextMenuInit(el) {
 }
 
 function ShowContextMenu(el, e) {
-	el.style.top = e.y + 'px';
-	el.style.left = e.x + 'px';
 	el.hidden = false;
+
+	if (el.offsetHeight > document.documentElement.clientHeight) {
+		el.style.top = document.scrollingElement.scrollTop + 'px';
+	} else if (el.offsetHeight + e.y > document.documentElement.clientHeight) {
+		el.style.top = (document.scrollingElement.scrollTop + document.documentElement.clientHeight - el.offsetHeight) + 'px';
+	} else {
+		el.style.top = (e.y + document.scrollingElement.scrollTop) + 'px';
+	}
+
+	if (el.offsetWidth > document.documentElement.clientWidth) {
+		el.style.left = document.scrollingElement.scrollLeft + 'px';
+	} else if (el.offsetWidth + e.x > document.documentElement.clientWidth) {
+		el.style.left = (document.scrollingElement.scrollLeft + document.documentElement.clientWidth - el.offsetWidth) + 'px';
+	} else {
+		el.style.left = (e.x + document.scrollingElement.scrollLeft) + 'px';
+	}
+
 	el.focus();
 }
 
@@ -183,6 +215,7 @@ function ChangeBoard(thisBoard) {
 						doc: doc,
 						li: newEl,
 						el: document.createElement('span'),
+						tag: null,
 					};
 
 					thisBoard.tasks[doc.id] = task;
@@ -201,13 +234,7 @@ function ChangeBoard(thisBoard) {
 					newEl.appendChild(completeButton);
 					newEl.appendChild(task.el);
 
-					if (task.workstation !== '') {
-						var tagEl = document.createElement('i');
-						if (workstations.hasOwnProperty(task.workstation)) {
-							tagEl.innerText = workstations[task.workstation].name;
-							newEl.appendChild(tagEl);
-						}
-					}
+					UpdateTask(task);
 
 					newEl.onclick = function() {
 						if (document.activeElement === task.li && selection === task) {
@@ -227,6 +254,8 @@ function ChangeBoard(thisBoard) {
 							taskContextMenu.FocusOut(null);
 							return false;
 						};
+						if (selection !== null)
+							selection.li.classList.remove('selected');	
 						selection = task;
 						selection.li.classList.add('selected');
 
@@ -267,6 +296,8 @@ function ChangeBoard(thisBoard) {
 					task.name = data.name;
 					task.status = data.status;
 					task.workstation = data.workstation;
+
+					UpdateTask(task);
 
 					task.el.innerText = task.name;
 				}

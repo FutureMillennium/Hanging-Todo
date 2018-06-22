@@ -1,7 +1,7 @@
 @charset "UTF-8";
 html, body, input, button { font-family: sans-serif; font-size: 14px; }
 
-html, body { margin: 0; padding: 0; height: 100%; }
+html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; }
 
 #loaderDiv { position: fixed; display: flex; background: white; color: black; width: 100%; height: 100%; align-items: center; place-content: center; }
 #loaderDiv[hidden] { display: none; }
@@ -16,23 +16,23 @@ html, body { margin: 0; padding: 0; height: 100%; }
 .user img { margin-right: 5px; vertical-align: middle; max-height: 40px; }
 
 #curWorkstationDiv { cursor: default; padding: 10px; background: #ddd; height: 40px; box-sizing: border-box; line-height: 20px; width: 100%; max-width: 300px; position: relative; color: #666; transition: background-color 0.1s, color 0.1s; }
-#curWorkstationDiv::before { color: #999; position: absolute; content: '▼'; right: 10px; top: 10px; }
+#curWorkstationDiv::before { color: #999; position: absolute; content: 'Ôľ╝'; right: 10px; top: 10px; }
 #curWorkstationDiv:hover { background: #009688; color: white; }
 #curWorkstationDiv:hover::before { color: rgba(255, 255, 255, 0.5); }
 #curWorkstationDiv.expanded { background: #aaa; color: #666; }
-#curWorkstationDiv.expanded::before { content: '▲'; color: #666; }
+#curWorkstationDiv.expanded::before { content: 'Ôľ▓'; color: #666; }
 
 #workstationSelectionDiv { position: absolute; background: #ddd; width: 100%; max-width: 300px; margin-bottom: 15px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
 #workstationSelectionDiv ul { list-style: none; margin: 0; padding: 0; }
 #workstationSelectionDiv li { cursor: default; margin: 0; padding: 10px; transition: background-color 0.1s, color 0.1s; }
 #workstationSelectionDiv li:hover, #workstationSelectionDiv li.menuon { background: #009688; color: white; }
-#workstationSelectionDiv li.selected { color: #666; background: #ccc; }
+#workstationSelectionDiv li.selected { color: #666; background: #ccc; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }
 #workstationSelectionDiv li:focus { margin: 4px; border: 1px solid #bbb; padding: 5px; cursor: text; background: white; box-sizing: border-box; color: black; }
 #workstationSelectionDiv input { width: calc(100% - 10px); box-sizing: border-box; padding: 5px; margin: 5px; }
 
 #workstationContextMenu, #boardContextMenu, #taskContextMenu { background: #eee; padding: 5px; position: absolute; min-width: 200px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
 #workstationContextMenu button, #boardContextMenu button, #taskContextMenu button { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; transition: background-color 0.1s, color 0.1s; }
-#workstationContextMenu button:hover, #boardContextMenu button:hover, #taskContextMenu button:hover { background: #009688; color: white; }
+#workstationContextMenu button:hover, #workstationContextMenu button:focus, #boardContextMenu button:hover, #boardContextMenu button:focus, #taskContextMenu button:hover, #taskContextMenu button:focus { background: #009688; color: white; }
 #workstationContextMenu button.selected, #boardContextMenu button.selected, #taskContextMenu button.selected { background: #ddd; /*color: white;*/ position: relative; color: black; /*&:hover::before {
 	background: white;
 }*/ }
@@ -43,7 +43,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
 .boards { padding: 0 5px; border-bottom: 2px solid #009688; margin: 5px 0 10px; }
 .boards ul { display: inline-block; list-style: none; margin: 5px 0 0; padding: 0; }
 .boards li, .boards input { display: inline-block; color: #666; vertical-align: bottom; }
-.boards li { padding: 10px 15px; margin: 0 0 0 2px; background: #eee; border-radius: 10px 10px 0 0; cursor: default; transition: background-color 0.1s, color 0.1s; }
+.boards li { padding: 10px 15px; margin: 0 0 0 2px; background: #eee; border-radius: 10px 10px 0 0; cursor: default; transition: background-color 0.1s, color 0.1s; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }
 .boards li:hover, .boards li.menuon { background: #009688; color: white; }
 .boards li:focus { border: 1px solid #bbb; cursor: text; background: white; color: black; margin: -1px -1px -1px 1px; }
 .boards li.selected { margin: 0 0 -2px 2px; background: white; color: #009688; border: 2px solid #009688; border-bottom: none; }
@@ -59,7 +59,7 @@ html, body { margin: 0; padding: 0; height: 100%; }
 #tasksDiv li:focus, #tasksDiv li.selected { background: #bee0dd; outline: none; }
 #tasksDiv li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #00000066; }
 #tasksDiv li button:hover, #tasksDiv li button:focus { color: white; border-color: #009688; }
-#tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; }
+#tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }
 #tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; }
 #tasksDiv li i { font-size: 0.8em; color: rgba(0, 0, 0, 0.5); display: inline-block; background: #00968820; padding: 5px; font-style: normal; border-radius: 5px; vertical-align: middle; margin-left: 5px; }
 
