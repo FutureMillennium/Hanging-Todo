@@ -87,8 +87,10 @@ function ContextMenuInit(el) {
 				lastWorkstation.el.classList.remove('menuon');
 			if (lastBoard !== null)
 				lastBoard.el.classList.remove('menuon');
-			if (selection !== null)
+			if (selection !== null) {
 				selection.li.classList.remove('selected');
+				selection = null;
+			}
 		}
 	};
 	el.addEventListener('focusout', el.FocusOut);
@@ -195,10 +197,15 @@ function ChangeBoard(thisBoard) {
 					};
 
 					task.el.innerText = task.name;
+					newEl.tabIndex = '0';
 					newEl.appendChild(completeButton);
 					newEl.appendChild(task.el);
 					newEl.onclick = function() {
-						InitRename(task);
+						if (document.activeElement === task.li && selection === task) {
+							InitRename(task);
+						} else {
+							selection = task;
+						}
 					};
 					newEl.oncontextmenu = function(e) {
 						deleteTask.onclick = function() {
@@ -222,6 +229,10 @@ function ChangeBoard(thisBoard) {
 						ShowContextMenu(taskContextMenu, e);
 						return false;
 					};
+					newEl.addEventListener('focusout', function() {
+						if (selection !== null && selection.li.classList.contains('selected') === false)
+							selection = null;
+					});
 
 					if (data.status !== 1
 						|| (data.workstation !== ''

@@ -253,8 +253,9 @@ html, body {
 			background: #e2e2e2;
 		}
 
-		&.selected {
+		&:focus, &.selected {
 			background: #bee0dd;
+			outline: none;
 		}
 
 		button {
