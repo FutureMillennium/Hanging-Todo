@@ -117,19 +117,19 @@ function ShowContextMenu(el, e) {
 	el.hidden = false;
 
 	if (el.offsetHeight > document.documentElement.clientHeight) {
-		el.style.top = document.scrollingElement.scrollTop + 'px';
+		el.style.top = 0 + 'px';
 	} else if (el.offsetHeight + e.y > document.documentElement.clientHeight) {
-		el.style.top = (document.scrollingElement.scrollTop + document.documentElement.clientHeight - el.offsetHeight) + 'px';
+		el.style.top = (document.documentElement.clientHeight - el.offsetHeight) + 'px';
 	} else {
-		el.style.top = (e.y + document.scrollingElement.scrollTop) + 'px';
+		el.style.top = (e.y) + 'px';
 	}
 
 	if (el.offsetWidth > document.documentElement.clientWidth) {
-		el.style.left = document.scrollingElement.scrollLeft + 'px';
+		el.style.left = 0 + 'px';
 	} else if (el.offsetWidth + e.x > document.documentElement.clientWidth) {
-		el.style.left = (document.scrollingElement.scrollLeft + document.documentElement.clientWidth - el.offsetWidth) + 'px';
+		el.style.left = (document.documentElement.clientWidth - el.offsetWidth) + 'px';
 	} else {
-		el.style.left = (e.x + document.scrollingElement.scrollLeft) + 'px';
+		el.style.left = (e.x) + 'px';
 	}
 
 	el.focus();

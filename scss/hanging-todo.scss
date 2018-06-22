@@ -1,4 +1,4 @@
-$deleteColor: #BF3C25;
+﻿$deleteColor: #BF3C25;
 $actionColor: #009688;
 
 @mixin allowSelect {
@@ -161,7 +161,7 @@ html, body {
 #workstationContextMenu, #boardContextMenu, #taskContextMenu {
 	background: #eee;
 	padding: 5px;
-	position: absolute;
+	position: fixed;
 	min-width: 200px;
 	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
 
