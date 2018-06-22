@@ -23,29 +23,31 @@
 <div id="loaderDiv">Loading…</div>
 
 <div id="mainDiv" hidden>
-	<div class="user">
-		<img id="userImg" width="50" title="" />
-		<button id="logoutButton">Log out</button>
-	</div>
-
-	<div class="workstations">
-		<div id="curWorkstationDiv"></div>
-
-		<div id="workstationSelectionDiv" hidden>
-			<ul id="workstationsUl">
-				<li id="allWorkstationsButton">(Workstation)</li>
-			</ul>
-
-			<input type="text" name="newworkstation" placeholder="Add workstation" id="newWorkstationInput" />
+	<div class="topbar">
+		<div class="user">
+			<img id="userImg" title="" />
+			<button id="logoutButton">Log out</button>
 		</div>
 
-		<div id="workstationContextMenu" tabindex="-1" hidden><button id="deleteWorkstation" class="delete">Delete</button></div>
+		<div class="workstations">
+			<div class="select">
+				<div id="curWorkstationDiv"></div>
+			</div>
+
+			<div id="workstationSelectionDiv" hidden>
+				<ul id="workstationsUl">
+					<li id="allWorkstationsButton">(Workstation)</li>
+				</ul>
+
+				<input type="text" name="newworkstation" placeholder="Add workstation" id="newWorkstationInput" />
+			</div>
+
+			<div id="workstationContextMenu" tabindex="-1" hidden><button id="deleteWorkstation" class="delete">Delete</button></div>
+		</div>
 	</div>
 
 	<div class="boards">
-		<ul id="boardsUl">
-			<li id="allBoardsButton">(All)</li>
-		</ul>
+		<ul id="boardsUl"><li id="allBoardsButton">(All)</li></ul>
 
 		<div id="boardContextMenu" tabindex="-1" hidden><button id="deleteBoard" class="delete">Delete</button></div>
 
@@ -55,9 +57,8 @@
 	<div id="tasksDiv" hidden>
 		<div>
 			<input type="text" name="newtask" placeholder="Add task" id="addTaskInput" />
-			<div id="taskWorkstationSelect" hidden>
-				<label><input type="radio" name="workstation" value="0" checked /> (any)</label>
-				<label><input type="radio" name="workstation" value="1" id="curWorkstationRadio" /><span></span></label>
+			<div id="taskWorkstationSelect" hidden class="default" title="Workstation for this task">
+				<label><input type="radio" name="workstation" value="0" checked class="default" /><span> (any)</span></label><label><input type="radio" name="workstation" value="1" id="curWorkstationRadio" /><span></span></label>
 			</div>
 		</div>
 

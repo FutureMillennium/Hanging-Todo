@@ -1,8 +1,114 @@
 $deleteColor: #BF3C25;
+$actionColor: #009688;
 
-html, body {
+html, body, input, button {
 	font-family: sans-serif;
 	font-size: 14px;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+.topbar {
+	overflow: hidden;
+
+	.select {
+		background: #eee;
+	}
+}
+
+.user {
+	float: right;
+	margin-right: 10px;
+
+	img {
+		margin-right: 5px;
+		vertical-align: middle;
+		max-height: 40px;
+	}
+}
+
+#curWorkstationDiv {
+	cursor: default;
+	padding: 10px;
+	background: #ddd;
+	height: 40px;
+	box-sizing: border-box;
+	line-height: 20px;
+	width: 100%;
+	max-width: 300px;
+	position: relative;
+	color: #666;
+
+	&::before {
+		color: #999;
+		position: absolute;
+		content: '▼';
+		right: 10px;
+		top: 10px;
+	}
+
+	&.expanded {
+		background: #ccc;
+
+		&::before {
+			content: '▲';
+		}
+	}
+
+	&:hover {
+		background: $actionColor;
+		color: white;
+
+		&::before {
+			color: rgba(255, 255, 255, 0.5);
+		}
+	}
+}
+
+#workstationSelectionDiv {
+	background: #ddd;
+	max-width: 300px;
+	margin-bottom: 15px;
+	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	li {
+		cursor: default;
+		margin: 0;
+		padding: 10px;
+
+		&:hover {
+			background: $actionColor;
+			color: white;
+		}
+
+		&.selected {
+			color: #666;
+			background: #ccc;
+
+			&:focus {
+				margin: 4px;
+				border: 1px solid #bbb;
+				padding: 5px;
+				cursor: text;
+				background: white;
+				box-sizing: border-box;
+			}
+		}
+	}
+	input {
+		width: calc(100% - 10px);
+		box-sizing: border-box;
+		padding: 5px;
+		margin: 5px;
+	}
 }
 
 #workstationContextMenu, #boardContextMenu, #taskContextMenu {
@@ -10,6 +116,7 @@ html, body {
 	padding: 5px;
 	position: absolute;
 	min-width: 200px;
+	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
 
 	button {
 		display: block;
@@ -19,6 +126,7 @@ html, body {
 		padding: 8px;
 		text-align: left;
 		padding-left: 25px;
+		border-radius: unset;
 
 		&.selected {
 			background: #ddd;
@@ -44,7 +152,7 @@ html, body {
 		}
 
 		&:hover {
-			background: #009688;
+			background: $actionColor;
 			color: white;
 		}
 
@@ -54,7 +162,7 @@ html, body {
 	}
 
 	h4 {
-		margin: 5px 0;
+		margin: 5px 5px;
 		padding: 0;
 		font-size: 11px;
 		font-weight: normal;
@@ -62,6 +170,202 @@ html, body {
 	}
 }
 
+.boards {
+	padding: 0 5px;
+	border-bottom: 2px solid $actionColor;
+	margin: 5px 0 10px;
+
+	ul {
+		display: inline-block;
+		list-style: none;
+		margin: 5px 0 0;
+		padding: 0;
+	}
+	li, input {
+		display: inline-block;
+		color: #666;
+		vertical-align: bottom;
+	}
+	li {
+		padding: 10px 15px;
+		margin: 0 0 0 2px;
+		background: #eee;
+		border-radius: 10px 10px 0 0;
+		cursor: default;
+
+		&:hover {
+			background: $actionColor;
+			color: white;
+		}
+
+		&.selected {
+			margin-bottom: -2px;
+			background: white;
+			color: $actionColor;
+			border: 2px solid $actionColor;
+			border-bottom: none;
+		}
+
+		&:focus {
+			cursor: text;
+			/* @TODO */
+		}
+	}
+	input {
+		vertical-align: top;
+		margin: 7px 0 0 5px;
+		padding: 5px 7px;
+		box-sizing: border-box;
+	}
+}
+
+#taskWorkstationSelect {
+	display: inline-block;
+}
+
+#tasksDiv {
+	margin: 15px;
+
+	ul {
+		list-style: none;
+		margin: 10px 0;
+		padding: 0;
+	}
+	li {
+		margin: 5px 0;
+		padding: 5px;
+		background: #f1f1f1;
+		cursor: default;
+		border-radius: 10px;
+
+		&:hover {
+			background: #e2e2e2;
+		}
+
+		button {
+			width: 32px;
+			height: 32px;
+			margin-right: 2px;
+			color: transparent;
+
+			&:hover {
+				color: white;
+			}
+		}
+
+		span {
+			display: inline-block;
+			padding: 7px;
+			min-width: 500px;
+			border: 1px solid transparent;
+
+			&:focus {
+				cursor: text;
+				background: white;
+				border-color: #bbb;
+			}
+		}
+	}
+}
+
+#addTaskInput {
+	padding: 10px 10px 10px 45px;
+	min-width: 500px;
+	margin-right: 7px;
+}
+
 .delete {
 	color: $deleteColor;
+}
+
+hr {
+	margin: 5px 0;
+	border: none;
+	border-top: 1px solid #bbb;
+}
+
+button {
+	border: 1px solid #666;
+	padding: 5px 7px;
+	border-radius: 5px;
+	color: #666;
+	background: none;
+
+	&:hover {
+		background: $actionColor;
+		color: white;
+		border-color: $actionColor;
+	}
+}
+
+input {
+	padding: 5px;
+	background: white;
+	border: 1px solid #bbb;
+	min-width: 200px;
+
+	&:hover {
+		background: #f1f1f1;
+	}
+
+	&:focus {
+		background: white;
+	}
+}
+
+label {
+	margin: 0;
+	padding: 2px 1px;
+	display: inline-block;
+	border-top: 2px solid $actionColor;
+	border-bottom: 2px solid $actionColor;
+
+	&:first-child {
+		padding-left: 2px;
+		border-left: 2px solid $actionColor;
+		border-radius: 8px 0 0 8px;
+	}
+	&:last-child {
+		padding-right: 2px;
+		border-right: 2px solid $actionColor;
+		border-radius: 0 8px 8px 0;
+	}
+}
+input[type=radio] {
+	display: none;
+	/* -webkit-appearance: none; */
+}
+label span {
+	display: block;
+	padding: 5px 12px;
+	color: $actionColor;
+
+	&:hover {
+		color: white;
+		background: $actionColor;
+	}
+}
+input {
+	&:checked + span {
+		background: $actionColor;
+		color: #fff;
+	}
+	&.default:checked + span {
+		background: #bbb;
+	}
+	&.default + span:hover {
+		background: #bbb;
+	}
+}
+label:first-child span {
+	border-radius: 6px 0 0 6px;
+}
+label:last-child span {
+	border-radius: 0 6px 6px 0;
+}
+
+.default {
+	label {
+		border-color: #bbb;
+	}
 }

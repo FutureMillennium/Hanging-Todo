@@ -45,6 +45,11 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+function CloseWorkstationSelect() {
+	curWorkstationDiv.className = '';
+	workstationSelectionDiv.hidden = true;
+}
+
 function SetClass(els, className) {
 	for (var i in els) {
 		els[i].className = className;
@@ -118,15 +123,24 @@ function NameWorkstation(workstation) {
 function ChangeWorkstation(workstation) {
 	SetSetting('workstation', (workstation === null ? '' : workstation.id));
 	curWorkstation = workstation;
+
+	allWorkstationsButton.classList.remove('selected');
+	workstationArray.forEach(function(item) {
+		item.el.classList.remove('selected');
+	});
+
 	if (curWorkstation === null) {
 		curWorkstationDiv.innerText = allWorkstationsButton.innerText;
 		taskWorkstationSelect.hidden = true;
+		allWorkstationsButton.classList.add('selected')
 	} else {
 		NameWorkstation(workstation);
 		taskWorkstationSelect.hidden = false;
 		curWorkstationRadio.nextSibling.innerText = curWorkstation.name;
+		workstation.el.classList.add('selected');
 	}
-	workstationSelectionDiv.hidden = true;
+
+	CloseWorkstationSelect();
 }
 
 function ChangeBoard(thisBoard) {
@@ -165,9 +179,11 @@ function ChangeBoard(thisBoard) {
 					thisBoard.taskArray.push(task);
 
 					var completeButton = document.createElement('button');
-					completeButton.innerText = 'Complete';
-					completeButton.onclick = function() {
+					completeButton.innerText = "✓";
+					completeButton.onclick = function(e) {
 						SetTaskStatus(task, 2);
+						e.stopPropagation();
+						return false;
 					};
 
 					task.el.innerText = task.name;
@@ -183,7 +199,7 @@ function ChangeBoard(thisBoard) {
 							})*/.catch(function(error) {
 								console.error("Error removing document: ", error);
 							});
-							workstationContextMenu.FocusOut(null);
+							taskContextMenu.FocusOut(null);
 							return false;
 						};
 						selection = task;
@@ -458,6 +474,7 @@ function Go() {
 				NameBoard(thisBoard);
 
 				thisBoard.div.hidden = true;
+				thisBoard.heading.hidden = true;
 				thisBoard.div.appendChild(thisBoard.heading);
 				thisBoard.div.appendChild(thisBoard.ul);
 				tasksDiv.appendChild(thisBoard.div);
@@ -562,9 +579,10 @@ allWorkstationsButton.onclick = function() {
 
 curWorkstationDiv.onclick = function() {
 	if (workstationSelectionDiv.hidden) {
+		this.className = 'expanded';
 		workstationSelectionDiv.hidden = false;
 	} else {
-		workstationSelectionDiv.hidden = true;
+		CloseWorkstationSelect();
 	}
 }
 
@@ -586,9 +604,21 @@ function CreateStatusButton(status, name) {
 }
 
 CreateStatusButton(1, "Immediate");
-CreateStatusButton(0, "Extra");
+CreateStatusButton(0, "Optional");
 CreateStatusButton(2, "Done");
 CreateStatusButton(3, "Archive");
 CreateStatusButton(-1, "Cancelled");
 
 AddWorkstationButton('', '(any)');
+
+var a = taskWorkstationSelect.getElementsByTagName('input');
+
+for (var i in a) {
+	a[i].onchange = function() {
+		if (curWorkstationRadio.checked) {
+			taskWorkstationSelect.className = '';
+		} else {
+			taskWorkstationSelect.className = 'default';
+		}
+	};
+}
