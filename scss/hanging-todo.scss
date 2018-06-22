@@ -88,7 +88,7 @@ html, body {
 		margin: 0;
 		padding: 10px;
 
-		&:hover {
+		&:hover, &.menuon {
 			background: $actionColor;
 			color: white;
 		}
@@ -96,15 +96,15 @@ html, body {
 		&.selected {
 			color: #666;
 			background: #ccc;
-
-			&:focus {
-				margin: 4px;
-				border: 1px solid #bbb;
-				padding: 5px;
-				cursor: text;
-				background: white;
-				box-sizing: border-box;
-			}
+		}
+		&:focus {
+			margin: 4px;
+			border: 1px solid #bbb;
+			padding: 5px;
+			cursor: text;
+			background: white;
+			box-sizing: border-box;
+			color: black;
 		}
 	}
 	input {
@@ -197,22 +197,29 @@ html, body {
 		border-radius: 10px 10px 0 0;
 		cursor: default;
 
-		&:hover {
+		&:hover, &.menuon {
 			background: $actionColor;
 			color: white;
 		}
 
+		&:focus {
+			border: 1px solid #bbb;
+			cursor: text;
+			background: white;
+			color: black;
+			margin: -1px -1px -1px 1px;
+		}
+
 		&.selected {
-			margin-bottom: -2px;
+			margin: 0 0 -2px 2px;
 			background: white;
 			color: $actionColor;
 			border: 2px solid $actionColor;
 			border-bottom: none;
-		}
 
-		&:focus {
-			cursor: text;
-			/* @TODO */
+			&:focus {
+				color: black;
+			}
 		}
 	}
 	input {
@@ -244,6 +251,10 @@ html, body {
 
 		&:hover {
 			background: #e2e2e2;
+		}
+
+		&.selected {
+			background: #bee0dd;
 		}
 
 		button {

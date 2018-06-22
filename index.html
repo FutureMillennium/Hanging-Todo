@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Hanging Todo by Zdeněk Gromnica</title>
 
@@ -42,14 +42,22 @@
 				<input type="text" name="newworkstation" placeholder="Add workstation" id="newWorkstationInput" />
 			</div>
 
-			<div id="workstationContextMenu" tabindex="-1" hidden><button id="deleteWorkstation" class="delete">Delete</button></div>
+			<div id="workstationContextMenu" tabindex="-1" hidden>
+				<button id="editWorkstation">Rename</button>
+				<hr />
+				<button id="deleteWorkstation" class="delete">Delete</button>
+			</div>
 		</div>
 	</div>
 
 	<div class="boards">
 		<ul id="boardsUl"><li id="allBoardsButton">(All)</li></ul>
 
-		<div id="boardContextMenu" tabindex="-1" hidden><button id="deleteBoard" class="delete">Delete</button></div>
+		<div id="boardContextMenu" tabindex="-1" hidden>
+			<button id="editBoard">Rename</button>
+			<hr />
+			<button id="deleteBoard" class="delete">Delete</button>
+		</div>
 
 		<input type="text" name="newboard" placeholder="Add board" id="newBoardInput" />
 	</div>

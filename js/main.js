@@ -9,11 +9,13 @@ var boards = {};
 var boardArray = [];
 var curBoard = null;
 var settingBoard;
+var lastBoard = null;
 
 var workstations = {};
 var workstationArray = [];
 var curWorkstation = null;
 var settingWorkstation;
+var lastWorkstation = null;
 
 var workstationButtons = {};
 
@@ -81,6 +83,12 @@ function ContextMenuInit(el) {
 	el.FocusOut = function(e) {
 		if (e === null || e.relatedTarget === null || e.relatedTarget.parentElement !== el) {
 			el.hidden = true;
+			if (lastWorkstation !== null)
+				lastWorkstation.el.classList.remove('menuon');
+			if (lastBoard !== null)
+				lastBoard.el.classList.remove('menuon');
+			if (selection !== null)
+				selection.li.classList.remove('selected');
 		}
 	};
 	el.addEventListener('focusout', el.FocusOut);
@@ -203,6 +211,7 @@ function ChangeBoard(thisBoard) {
 							return false;
 						};
 						selection = task;
+						selection.li.classList.add('selected');
 
 						SetClass(statusButtons, '');
 						statusButtons[task.status].className = 'selected';
@@ -375,6 +384,9 @@ function Go() {
 				NameWorkstation(newWorkstation);
 				
 				newEl.onclick = function() {
+					if (newWorkstation.el.contentEditable === 'plaintext-only')
+						return;
+					
 					if (newWorkstation === curWorkstation) {
 						InitRename(newWorkstation);
 						return;
@@ -382,6 +394,14 @@ function Go() {
 					ChangeWorkstation(newWorkstation);
 				};
 				newEl.oncontextmenu = function(e) {
+					lastWorkstation = newWorkstation;
+					newWorkstation.el.classList.add('menuon');
+
+					editWorkstation.onclick = function() {
+						InitRename(newWorkstation);
+						workstationContextMenu.FocusOut(null);
+						return false;
+					};
 					deleteWorkstation.onclick = function() {
 						newWorkstation.doc.ref.delete().then(function() {
 							//console.log("Document successfully deleted!");
@@ -453,9 +473,21 @@ function Go() {
 				boardArray.push(thisBoard);
 
 				newEl.onclick = function() {
+					if (thisBoard.el.contentEditable === 'plaintext-only')
+						return;
+
 					ChangeBoard(thisBoard);
 				};
 				newEl.oncontextmenu = function(e) {
+					lastBoard = thisBoard;
+					thisBoard.el.classList.add('menuon');
+
+					editBoard.onclick = function() {
+						InitRename(thisBoard);
+						boardContextMenu.FocusOut(null);
+						return false;
+					};
+					
 					deleteBoard.onclick = function() {
 						thisBoard.doc.ref.delete().then(function() {
 							//console.log("Document successfully deleted!");
@@ -575,7 +607,10 @@ logoutButton.onclick = function() {
 
 allWorkstationsButton.onclick = function() {
 	ChangeWorkstation(null);
-}
+};
+allWorkstationsButton.oncontextmenu = function() {
+	return false;
+};
 
 curWorkstationDiv.onclick = function() {
 	if (workstationSelectionDiv.hidden) {
@@ -585,6 +620,8 @@ curWorkstationDiv.onclick = function() {
 		CloseWorkstationSelect();
 	}
 }
+
+allBoardsButton.oncontextmenu = function() { return false; };
 
 ContextMenuInit(workstationContextMenu);
 ContextMenuInit(boardContextMenu);
