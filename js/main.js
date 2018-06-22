@@ -200,6 +200,13 @@ function ChangeBoard(thisBoard) {
 					newEl.tabIndex = '0';
 					newEl.appendChild(completeButton);
 					newEl.appendChild(task.el);
+
+					if (task.workstation !== '') {
+						var tagEl = document.createElement('i');
+						tagEl.innerText = workstations[task.workstation].name;
+						newEl.appendChild(tagEl);
+					}
+
 					newEl.onclick = function() {
 						if (document.activeElement === task.li && selection === task) {
 							InitRename(task);

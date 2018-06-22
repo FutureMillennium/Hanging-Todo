@@ -132,11 +132,16 @@ html, body {
 		padding-left: 25px;
 		border-radius: unset;
 
+		&:hover {
+			background: $actionColor;
+			color: white;
+		}
+
 		&.selected {
 			background: #ddd;
 			/*color: white;*/
-			font-weight: bold;
 			position: relative;
+			color: black;
 
 			&::before {
 				position: absolute;
@@ -150,14 +155,9 @@ html, body {
 				border-radius: 8px;
 			}
 
-			&:hover::before {
+			/*&:hover::before {
 				background: white;
-			}
-		}
-
-		&:hover {
-			background: $actionColor;
-			color: white;
+			}*/
 		}
 
 		&.delete:hover {
@@ -274,14 +274,26 @@ html, body {
 		span {
 			display: inline-block;
 			padding: 7px;
-			min-width: 500px;
 			border: 1px solid transparent;
 
 			&:focus {
 				cursor: text;
 				background: white;
 				border-color: #bbb;
+				min-width: 500px;
 			}
+		}
+
+		i {
+			font-size: 0.8em;
+			color: rgba(0, 0, 0, 0.5);
+			display: inline-block;
+			background: #00968820;
+			padding: 5px;
+			font-style: normal;
+			border-radius: 5px;
+			vertical-align: middle;
+			margin-left: 5px;
 		}
 	}
 }

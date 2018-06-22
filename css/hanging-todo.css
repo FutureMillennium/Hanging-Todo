@@ -26,10 +26,11 @@ html, body { margin: 0; padding: 0; }
 
 #workstationContextMenu, #boardContextMenu, #taskContextMenu { background: #eee; padding: 5px; position: absolute; min-width: 200px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
 #workstationContextMenu button, #boardContextMenu button, #taskContextMenu button { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; }
-#workstationContextMenu button.selected, #boardContextMenu button.selected, #taskContextMenu button.selected { background: #ddd; /*color: white;*/ font-weight: bold; position: relative; }
-#workstationContextMenu button.selected::before, #boardContextMenu button.selected::before, #taskContextMenu button.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
-#workstationContextMenu button.selected:hover::before, #boardContextMenu button.selected:hover::before, #taskContextMenu button.selected:hover::before { background: white; }
 #workstationContextMenu button:hover, #boardContextMenu button:hover, #taskContextMenu button:hover { background: #009688; color: white; }
+#workstationContextMenu button.selected, #boardContextMenu button.selected, #taskContextMenu button.selected { background: #ddd; /*color: white;*/ position: relative; color: black; /*&:hover::before {
+	background: white;
+}*/ }
+#workstationContextMenu button.selected::before, #boardContextMenu button.selected::before, #taskContextMenu button.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
 #workstationContextMenu button.delete:hover, #boardContextMenu button.delete:hover, #taskContextMenu button.delete:hover { background: #BF3C25; }
 #workstationContextMenu h4, #boardContextMenu h4, #taskContextMenu h4 { margin: 5px 5px; padding: 0; font-size: 11px; font-weight: normal; color: #666; }
 
@@ -52,8 +53,9 @@ html, body { margin: 0; padding: 0; }
 #tasksDiv li:focus, #tasksDiv li.selected { background: #bee0dd; outline: none; }
 #tasksDiv li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #999; }
 #tasksDiv li button:hover, #tasksDiv li button:focus { color: white; border-color: #009688; }
-#tasksDiv li span { display: inline-block; padding: 7px; min-width: 500px; border: 1px solid transparent; }
-#tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; }
+#tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; }
+#tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; }
+#tasksDiv li i { font-size: 0.8em; color: rgba(0, 0, 0, 0.5); display: inline-block; background: #00968820; padding: 5px; font-style: normal; border-radius: 5px; vertical-align: middle; margin-left: 5px; }
 
 #addTaskInput { padding: 10px 10px 10px 45px; min-width: 500px; margin-right: 7px; }
 
