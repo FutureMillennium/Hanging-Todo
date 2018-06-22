@@ -51,17 +51,17 @@ function SetClass(els, className) {
 	}
 }
 
-function AddWorkstationButton(name, title) {
+function AddWorkstationButton(id, title) {
 	var button = document.createElement('button');
-	button.innerText = (title === undefined ? name : title);
+	button.innerText = (title === undefined ? id : title);
 	button.onclick = function() {
 		selection.doc.ref.set({
-			workstation: name,
+			workstation: id,
 		}, { merge: true }); // @TODO @low onerror
 		button.parentElement.hidden = true;
 	};
 
-	workstationButtons[name] = button;
+	workstationButtons[id] = button;
 
 	taskContextMenu.insertBefore(button, taskContextMenu.children[taskContextMenu.children.length - 2]);
 }
@@ -116,7 +116,7 @@ function NameWorkstation(workstation) {
 }
 
 function ChangeWorkstation(workstation) {
-	SetSetting('workstation', (workstation === null ? '' : workstation.name));
+	SetSetting('workstation', (workstation === null ? '' : workstation.id));
 	curWorkstation = workstation;
 	if (curWorkstation === null) {
 		curWorkstationDiv.innerText = allWorkstationsButton.innerText;
@@ -135,7 +135,7 @@ function ChangeBoard(thisBoard) {
 		return;
 	}
 
-	SetSetting('board', (thisBoard === null ? '' : thisBoard.name));
+	SetSetting('board', (thisBoard === null ? '' : thisBoard.doc.id));
 
 	curBoard = thisBoard;
 
@@ -201,7 +201,7 @@ function ChangeBoard(thisBoard) {
 					if (data.status !== 1
 						|| (data.workstation !== ''
 							&& (curWorkstation === null
-								|| curWorkstation.name !== data.workstation)))
+								|| curWorkstation.id !== data.workstation)))
 					{
 						//task.el.hidden = true;
 					} else {
@@ -347,6 +347,7 @@ function Go() {
 				var data = doc.data();
 				var newEl = document.createElement('li');
 				var newWorkstation = {
+					id: doc.id,
 					name: data.name,
 					doc: doc,
 					el: newEl,
@@ -378,11 +379,11 @@ function Go() {
 					return false;
 				};
 
-				if (settingWorkstation === newWorkstation.name) {
+				if (settingWorkstation === newWorkstation.id) {
 					ChangeWorkstation(newWorkstation);
 				}
 
-				AddWorkstationButton(newWorkstation.name);
+				AddWorkstationButton(newWorkstation.id, newWorkstation.name);
 
 				workstationsUl.appendChild(newEl);
 			}
@@ -461,7 +462,7 @@ function Go() {
 				thisBoard.div.appendChild(thisBoard.ul);
 				tasksDiv.appendChild(thisBoard.div);
 
-				if (settingBoard === thisBoard.name) {
+				if (settingBoard === thisBoard.doc.id) {
 					ChangeBoard(thisBoard);
 				}
 			}
@@ -534,7 +535,7 @@ addTaskInput.onkeypress = function(e) {
 		};
 
 		if (curWorkstation !== null && curWorkstationRadio.checked) {
-			newData.workstation = curWorkstation.name;
+			newData.workstation = curWorkstation.id;
 		}
 
 		curBoard.doc.ref.collection('tasks').add(newData)
