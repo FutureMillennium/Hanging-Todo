@@ -1,9 +1,13 @@
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /boards/{board}/tasks/{task} {
+      allow read, write: if get(/databases/$(database)/documents/boards/$(board)).data.userid == request.auth.uid;
+    }
+  
     match /{document=**} {
       allow read, update, delete: if request.auth.uid == resource.data.userid;
       allow create: if request.auth.uid != null
-      	&& 'userid' in request.resource.data
+        && 'userid' in request.resource.data
         && request.resource.data.userid == request.auth.uid;
     }
   }

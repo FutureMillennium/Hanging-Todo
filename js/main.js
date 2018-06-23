@@ -290,6 +290,20 @@ function ChangeBoard(thisBoard) {
 						SetClass(workstationButtons, '');
 						workstationButtons[task.workstation].className = 'selected';
 
+						if (task.status === 2 || task.status === 3) {
+							repeatTask.onclick = function() {
+								SetTaskStatus(task, 1);
+								taskContextMenu.FocusOut(null);
+								return false;
+							};
+
+							repeatTask.hidden = false;
+							repeatTask.nextSibling.hidden = false;
+						} else {
+							repeatTask.hidden = true;
+							repeatTask.nextSibling.hidden = true;
+						}
+
 						ShowContextMenu(taskContextMenu, e);
 						return false;
 					};

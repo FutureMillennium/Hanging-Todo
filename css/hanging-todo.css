@@ -38,6 +38,7 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 }*/ }
 #workstationContextMenu button.selected::before, #boardContextMenu button.selected::before, #taskContextMenu button.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
 #workstationContextMenu button.delete:hover, #boardContextMenu button.delete:hover, #taskContextMenu button.delete:hover { background: #BF3C25; }
+#workstationContextMenu button[hidden], #boardContextMenu button[hidden], #taskContextMenu button[hidden] { display: none; }
 #workstationContextMenu h4, #boardContextMenu h4, #taskContextMenu h4 { margin: 5px 5px; padding: 0; font-size: 11px; font-weight: normal; color: #999; }
 
 .boards { padding: 0 5px; border-bottom: 2px solid #009688; margin: 5px 0 10px; }

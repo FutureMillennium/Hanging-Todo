@@ -209,6 +209,10 @@ html, body {
 		&.delete:hover {
 			background: $deleteColor;
 		}
+
+		&[hidden] {
+			display: none;
+		}
 	}
 
 	h4 {
