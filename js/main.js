@@ -639,7 +639,9 @@ function Go() {
 				if (board.subscription !== null)
 					board.subscription(); // unsubscribe
 
-				// @TODO if board is selected
+				if (curBoard === board) {
+					tasksDiv.hidden = true;
+				}
 
 				boardArray.splice(boardArray.indexOf(board), 1);
 				delete boards[change.doc.id];
@@ -689,6 +691,7 @@ addTaskInput.onkeypress = function(e) {
 			name: newName,
 			workstation: '',
 			status: 1,
+			created: firebase.firestore.FieldValue.serverTimestamp(),
 		};
 
 		if (curWorkstation !== null && curWorkstationRadio.checked) {

@@ -51,6 +51,7 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 .boards input { vertical-align: top; margin: 7px 0 0 5px; padding: 5px 7px; box-sizing: border-box; }
 
 #taskWorkstationSelect { display: inline-block; }
+#taskWorkstationSelect[hidden] { display: none; }
 
 #tasksDiv { margin: 15px; }
 #tasksDiv .addtask { margin-bottom: 15px; }
@@ -67,7 +68,7 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 #tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }
 #tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; color: black; }
 #tasksDiv li i { font-size: 0.8em; color: rgba(0, 0, 0, 0.5); display: inline-block; background: #00968820; padding: 5px; font-style: normal; border-radius: 5px; vertical-align: middle; margin-left: 5px; }
-#tasksDiv h3 { font-size: 1.0em; margin: 15px 0 5px; padding: 7px; }
+#tasksDiv h3 { font-size: 1.0em; margin: 15px 0 5px; padding: 7px; transition: background-color 0.1s; }
 #tasksDiv h3.Done, #tasksDiv h3.Archived { color: #666; }
 #tasksDiv h3.Cancelled { color: #999; }
 #tasksDiv h3:hover { background: #e2e2e2; }

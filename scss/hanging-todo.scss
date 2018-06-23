@@ -1,4 +1,4 @@
-﻿$deleteColor: #BF3C25;
+$deleteColor: #BF3C25;
 $actionColor: #009688;
 
 @mixin allowSelect {
@@ -280,6 +280,10 @@ html, body {
 
 #taskWorkstationSelect {
 	display: inline-block;
+
+	&[hidden] {
+		display: none;
+	}
 }
 
 #tasksDiv {
@@ -378,6 +382,7 @@ html, body {
 		font-size: 1.0em;
 		margin: 15px 0 5px;
 		padding: 7px;
+		transition: background-color 0.1s;
 
 		&.Done, &.Archived {
 			color: #666;
