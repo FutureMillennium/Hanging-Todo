@@ -31,12 +31,12 @@
 
 		<div class="workstations">
 			<div class="select">
-				<div id="curWorkstationDiv"></div>
+				<div id="curWorkstationDiv" title="Current workstation"></div>
 			</div>
 
 			<div id="workstationSelectionDiv" hidden>
 				<ul id="workstationsUl">
-					<li id="allWorkstationsButton">(Workstation)</li>
+					<li id="allWorkstationsButton">(Generic workstation)</li>
 				</ul>
 
 				<input type="text" name="newworkstation" placeholder="Add workstation" id="newWorkstationInput" />
@@ -65,7 +65,7 @@
 	<div id="tasksDiv" hidden>
 		<div class="addtask">
 			<input type="text" name="newtask" placeholder="Add task" id="addTaskInput" />
-			<div id="taskWorkstationSelect" hidden class="default" title="Workstation for this task">
+			<div id="taskWorkstationSelect" hidden class="default" title="Only show this task on this workstation">
 				<label><input type="radio" name="workstation" value="0" checked class="default" /><span> (any)</span></label><label><input type="radio" name="workstation" value="1" id="curWorkstationRadio" /><span></span></label>
 			</div>
 		</div>

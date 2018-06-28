@@ -429,12 +429,12 @@ firebase.auth().onAuthStateChanged(function(user) {
 				}
 			},
 			signInFlow: 'popup',
-			signInSuccessUrl: '/hanging-todo/', // @TODO?
+			signInSuccessUrl: '/Hanging-Todo/', // @TODO?
 			signInOptions: [
 				firebase.auth.GoogleAuthProvider.PROVIDER_ID,
 				firebase.auth.EmailAuthProvider.PROVIDER_ID,
 			],
-			tosUrl: '/hanging-todo/tos' // @TODO
+			tosUrl: '/Hanging-Todo/tos' // @TODO
 		};
 
 		document.getElementById('firebaseui-auth-container').hidden = false;
