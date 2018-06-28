@@ -230,7 +230,7 @@ function ChangeBoard(thisBoard) {
 	thisBoard.el.classList.add('selected');
 
 	if (curBoard.subscription === null) {
-			curBoard.subscription = curBoard.doc.ref.collection('tasks').onSnapshot(function(snapshot) {
+		curBoard.subscription = curBoard.doc.ref.collection('tasks').onSnapshot(function(snapshot) {
 			snapshot.docChanges().forEach(function(change) {
 				if (change.type === "added") {
 					var doc = change.doc;
@@ -352,6 +352,7 @@ function ChangeBoard(thisBoard) {
 				}
 			});
 
+			//thisBoard.loaded = true;
 			CountTasks(curBoard);
 		}, function(error) {
 			console.error('boards:', error); // @TODO
@@ -551,14 +552,36 @@ function Go() {
 	});
 
 	// boards --------------------------
-	db.collection('boards').where('userid', '==', curUser.uid).onSnapshot(function(snapshot) {
+	db.collection('boards').where('userid', '==', curUser.uid).where('status', '==', 1).onSnapshot(function(snapshot) {
 		snapshot.docChanges().forEach(function(change) {
+
+			function DeleteBoard(board) {
+				board.el.remove();
+				board.div.remove();
+
+				if (board.subscription !== null)
+					board.subscription(); // unsubscribe
+
+				if (curBoard === board) {
+					tasksDiv.hidden = true;
+				}
+
+				boardArray.splice(boardArray.indexOf(board), 1);
+				delete boards[change.doc.id];
+			}
+
 			if (change.type === "added") {
 				var doc = change.doc;
 				var data = doc.data();
+
+				if (data.status < 0) {
+					return;
+				}
+
 				var newEl = document.createElement('li');
 				var thisBoard = {
 					name: data.name,
+					status: data.status,
 					doc: doc,
 					el: newEl,
 					subscription: null,
@@ -568,6 +591,7 @@ function Go() {
 					hs: {},
 					tasks: {},
 					taskArray: [],
+					//loaded: false,
 				};
 
 				boards[doc.id] = thisBoard;
@@ -590,11 +614,18 @@ function Go() {
 					};
 					
 					deleteBoard.onclick = function() {
-						thisBoard.doc.ref.delete().then(function() {
-							//console.log("Document successfully deleted!");
-						}).catch(function(error) {
-							console.error("Error removing document: ", error);
-						});
+						thisBoard.doc.ref.set({
+							status: -1,
+						}, { merge: true }); // @TODO @low onerror
+						/*if (thisBoard.loaded === true) {
+							if (thisBoard.tasks.length === 0) {
+								thisBoard.doc.ref.delete().then(function() {
+									//console.log("Document successfully deleted!");
+								}).catch(function(error) {
+									console.error("Error removing document: ", error);
+								});
+							}
+						}*/
 						boardContextMenu.FocusOut(null);
 						return false;
 					};
@@ -647,25 +678,19 @@ function Go() {
 			else if (change.type === "modified") {
 				var data = change.doc.data();
 				var board = boards[change.doc.id];
+
+				if (data.status < 0) {
+					DeleteBoard(board);
+					return;
+				}
+
 				board.name = data.name;
 				NameBoard(board);
 				//console.log("Modified: ", data);
 			}
 			else if (change.type === "removed") {
 				var board = boards[change.doc.id];
-
-				board.el.remove();
-				board.div.remove();
-
-				if (board.subscription !== null)
-					board.subscription(); // unsubscribe
-
-				if (curBoard === board) {
-					tasksDiv.hidden = true;
-				}
-
-				boardArray.splice(boardArray.indexOf(board), 1);
-				delete boards[change.doc.id];
+				DeleteBoard(board);
 
 				//console.log("Removed: ", change.doc.data());
 			}
@@ -695,6 +720,7 @@ newBoardInput.onkeypress = function(e) {
 		this.value = '';
 		db.collection('boards').add({
 				name: newName,
+				status: 1,
 				userid: curUser.uid,
 			})
 			.then(function(docRef) {
