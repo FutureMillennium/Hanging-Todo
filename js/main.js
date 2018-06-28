@@ -2,8 +2,15 @@
 var appTitle;
 var APP_NAME = 'hanging-todo';
 
-var statuses = [1, 0, 2, 3, -1];
-var statusNames = {'1': "Immediate", '0': "Optional", '2': "Done", '3': "Archived", '-1': "Cancelled"};
+var statusAr = [1, 5, 0, 2, 3, 4];
+var statuses = {
+	1: {name: "Immediate", expanded: true},
+	5: {name: "Postponed", expanded: true},
+	0: {name: "Optional", expanded: true},
+	2: {name: "Done", expanded: false},
+	3: {name: "Archived", expanded: false},
+	4: {name: "Cancelled", expanded: false},
+};
 
 var curUser;
 var db;
@@ -603,13 +610,13 @@ function Go() {
 				thisBoard.heading.hidden = true;
 				thisBoard.div.appendChild(thisBoard.heading);
 
-				for (var i in statuses) {
-					var si = statuses[i];
+				for (var i in statusAr) {
+					var si = statusAr[i];
 					if (si !== 1) {
 						thisBoard.hs[si] = document.createElement('h3');
-						thisBoard.hs[si].innerText = statusNames[si];
-						thisBoard.hs[si].className = statusNames[si];
-						if (si === 0)
+						thisBoard.hs[si].innerText = statuses[si].name;
+						thisBoard.hs[si].className = statuses[si].name;
+						if (statuses[si].expanded === true)
 							thisBoard.hs[si].classList.add('expanded');
 						thisBoard.div.appendChild(thisBoard.hs[si]);
 
@@ -625,8 +632,8 @@ function Go() {
 					}
 
 					thisBoard.uls[si] = document.createElement('ul');
-					thisBoard.uls[si].className = statusNames[si];
-					if (si > 1 || si < 0) {
+					thisBoard.uls[si].className = statuses[si].name;
+					if (statuses[si].expanded !== true) {
 						thisBoard.uls[si].hidden = true; }
 					thisBoard.div.appendChild(thisBoard.uls[si]);
 				}
@@ -765,9 +772,9 @@ function CreateStatusButton(status, name) {
 	taskContextMenu.insertBefore(button, taskContextMenu.children[taskContextMenu.children.length - 4]);
 }
 
-for (var i in statuses) {
-	var si = statuses[i];
-	CreateStatusButton(si, statusNames[si]);
+for (var i in statusAr) {
+	var si = statusAr[i];
+	CreateStatusButton(si, statuses[si].name);
 }
 
 AddWorkstationButton('', '(any)');
