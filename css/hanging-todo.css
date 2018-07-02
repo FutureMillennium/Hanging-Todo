@@ -30,16 +30,18 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 #workstationSelectionDiv li:focus { margin: 4px; border: 1px solid #bbb; padding: 5px; cursor: text; background: white; box-sizing: border-box; color: black; }
 #workstationSelectionDiv input { width: calc(100% - 10px); box-sizing: border-box; padding: 5px; margin: 5px; }
 
-#workstationContextMenu, #boardContextMenu, #taskContextMenu { background: #eee; padding: 5px; position: fixed; min-width: 200px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
-#workstationContextMenu button, #boardContextMenu button, #taskContextMenu button { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; transition: background-color 0.1s, color 0.1s; }
-#workstationContextMenu button:hover, #workstationContextMenu button:focus, #boardContextMenu button:hover, #boardContextMenu button:focus, #taskContextMenu button:hover, #taskContextMenu button:focus { background: #009688; color: white; }
-#workstationContextMenu button.selected, #boardContextMenu button.selected, #taskContextMenu button.selected { background: #ddd; /*color: white;*/ position: relative; color: black; /*&:hover::before {
+#workstationContextMenu, #boardContextMenu, #taskContextMenu, #userMenu { background: #eee; padding: 5px; position: fixed; min-width: 200px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
+#workstationContextMenu button, #boardContextMenu button, #taskContextMenu button, #userMenu button { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; transition: background-color 0.1s, color 0.1s; }
+#workstationContextMenu button:hover, #workstationContextMenu button:focus, #boardContextMenu button:hover, #boardContextMenu button:focus, #taskContextMenu button:hover, #taskContextMenu button:focus, #userMenu button:hover, #userMenu button:focus { background: #009688; color: white; }
+#workstationContextMenu button.selected, #boardContextMenu button.selected, #taskContextMenu button.selected, #userMenu button.selected { background: #ddd; /*color: white;*/ position: relative; color: black; /*&:hover::before {
 	background: white;
 }*/ }
-#workstationContextMenu button.selected::before, #boardContextMenu button.selected::before, #taskContextMenu button.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
-#workstationContextMenu button.delete:hover, #boardContextMenu button.delete:hover, #taskContextMenu button.delete:hover { background: #BF3C25; }
-#workstationContextMenu button[hidden], #boardContextMenu button[hidden], #taskContextMenu button[hidden] { display: none; }
-#workstationContextMenu h4, #boardContextMenu h4, #taskContextMenu h4 { margin: 5px 5px; padding: 0; font-size: 11px; font-weight: normal; color: #999; }
+#workstationContextMenu button.selected::before, #boardContextMenu button.selected::before, #taskContextMenu button.selected::before, #userMenu button.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
+#workstationContextMenu button.delete:hover, #boardContextMenu button.delete:hover, #taskContextMenu button.delete:hover, #userMenu button.delete:hover { background: #BF3C25; }
+#workstationContextMenu button[hidden], #boardContextMenu button[hidden], #taskContextMenu button[hidden], #userMenu button[hidden] { display: none; }
+#workstationContextMenu h4, #boardContextMenu h4, #taskContextMenu h4, #userMenu h4 { margin: 5px 5px; padding: 0; font-size: 11px; font-weight: normal; color: #999; }
+
+#userMenu { right: 0; top: 40px; }
 
 .boards { padding: 0 5px; border-bottom: 2px solid #009688; margin: 5px 0 10px; }
 .boards ul { display: inline-block; list-style: none; margin: 5px 0 0; padding: 0; }
@@ -82,8 +84,11 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 
 hr { margin: 5px 0; border: none; border-top: 1px solid #bbb; }
 
-button { border: 1px solid #666; padding: 5px 7px; border-radius: 5px; color: #666; background: none; transition: background-color 0.1s, color 0.1s; }
-button:hover, button:focus { background: #009688; color: white; border-color: #009688; }
+button, .buttons li { border: 1px solid #666; padding: 5px 7px; border-radius: 5px; color: #666; background: none; transition: background-color 0.1s, color 0.1s; }
+button:hover, button:focus, .buttons li:hover, .buttons li:focus { background: #009688; color: white; border-color: #009688; }
+
+.buttons { list-style: none; margin: 0; padding: 0; }
+.buttons li { margin: 5px 0 0; padding: 10px 15px; }
 
 input { padding: 5px; background: white; border: 1px solid #bbb; min-width: 200px; transition: background-color 0.1s; }
 input:hover { background: #f1f1f1; }
@@ -107,5 +112,13 @@ label:first-child span { border-radius: 6px 0 0 6px; }
 label:last-child span { border-radius: 0 6px 6px 0; }
 
 .default label { border-color: #bbb; }
+
+#importer { position: fixed; bottom: 0; left: 0; width: 100%; background: #ddd; padding: 20px; box-sizing: border-box; max-height: 50%; overflow-y: auto; }
+#importer h2 { font-size: 1.2em; color: #666; font-weight: normal; margin: 0 0 10px; }
+#importer p { margin: 0; }
+#importer #dragHere { border: 2px dashed #999; padding: 40px; text-align: center; font-size: 1.4em; }
+#importer.active #dragHere { border-color: #009688; }
+
+#closeImporter { position: absolute; right: 20px; top: 20px; border: none; height: 32px; width: 32px; }
 
 /*# sourceMappingURL=hanging-todo.css.map */

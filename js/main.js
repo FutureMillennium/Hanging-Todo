@@ -4,12 +4,12 @@ var APP_NAME = 'hanging-todo';
 
 var statusAr = [1, 5, 0, 2, 3, 4];
 var statuses = {
-	1: {name: "Immediate", expanded: true},
-	5: {name: "Postponed", expanded: true},
-	0: {name: "Optional", expanded: true},
-	2: {name: "Done", expanded: false},
-	3: {name: "Archived", expanded: false},
-	4: {name: "Cancelled", expanded: false},
+	1: {name: "Immediate", expanded: true, done: 0, },
+	5: {name: "Postponed", expanded: true, done: 0, },
+	0: {name: "Optional", expanded: true, done: 0, },
+	2: {name: "Done", expanded: false, done: 1, },
+	3: {name: "Archived", expanded: false, done: 1, },
+	4: {name: "Cancelled", expanded: false, done: 2, },
 };
 
 var curUser;
@@ -57,6 +57,29 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+
+function AddTask(name, status, workstation) {
+	if (status === undefined)
+		status = 1;
+
+	if (workstation === undefined)
+		workstation = '';
+
+	var newData = {
+		name: name,
+		workstation: workstation,
+		status: status,
+		created: firebase.firestore.FieldValue.serverTimestamp(),
+	};
+
+	curBoard.doc.ref.collection('tasks').add(newData)
+		.then(function(docRef) {
+			//console.log(docRef);
+		})
+		.catch(function(error) {
+			console.error("Error writing document: ", error);
+		});
+}
 
 function UpdateTaskWorkstation(task) {
 	if (task.workstation !== ''
@@ -252,7 +275,7 @@ function ChangeBoard(thisBoard) {
 					var completeButton = document.createElement('button');
 					completeButton.innerText = "✓";
 					completeButton.onclick = function(e) {
-						if (task.status > 1) {
+						if (statuses[task.status].done === 1) {
 							SetTaskStatus(task, 1);
 						} else {
 							SetTaskStatus(task, 2);
@@ -733,25 +756,13 @@ addTaskInput.onkeypress = function(e) {
 	if (e.keyCode === 13) {
 		var newName = this.value;
 		this.value = '';
-
-		var newData = {
-			name: newName,
-			workstation: '',
-			status: 1,
-			created: firebase.firestore.FieldValue.serverTimestamp(),
-		};
+		var workstation = '';
 
 		if (curWorkstation !== null && curWorkstationRadio.checked) {
-			newData.workstation = curWorkstation.id;
+			workstation = curWorkstation.id;
 		}
 
-		curBoard.doc.ref.collection('tasks').add(newData)
-			.then(function(docRef) {
-				//console.log(docRef);
-			})
-			.catch(function(error) {
-				console.error("Error writing document: ", error);
-			});
+		AddTask(newName, 1, workstation);
 	}
 };
 
@@ -781,6 +792,7 @@ curWorkstationDiv.onclick = function() {
 
 //allBoardsButton.oncontextmenu = function() { return false; };
 
+ContextMenuInit(userMenu);
 ContextMenuInit(workstationContextMenu);
 ContextMenuInit(boardContextMenu);
 ContextMenuInit(taskContextMenu);
@@ -816,3 +828,84 @@ for (var i in a) {
 		}
 	};
 }
+
+userImg.onclick = function() {
+	userMenu.hidden = false;
+	userMenu.focus();
+};
+
+importButton.onclick = function(e) {
+	importer.hidden = false;
+	userMenu.FocusOut(null);
+};
+
+importer.ondragenter = function(e) {
+	this.classList.add('active');
+};
+
+importer.ondragleave = function(e) {
+	this.classList.remove('active');
+};
+
+importer.ondragover = function(e) {
+	e.preventDefault();
+	this.classList.remove('active');
+}
+
+importer.ondrop = function(ev) {
+	ev.preventDefault();
+
+	var file = null;
+
+	if (ev.dataTransfer.items) {
+		if (ev.dataTransfer.items.length <= 0)
+			return;
+		
+		var i = 0;
+		if (ev.dataTransfer.items[i].kind === 'file') {
+			file = ev.dataTransfer.items[i].getAsFile();
+		}
+	} else {
+		file = ev.dataTransfer.files[0];
+	}
+
+	if (file === null)
+		return;
+
+	var reader = new FileReader();
+  
+	reader.onload = function(theFile) {
+		var w = JSON.parse(reader.result);
+		console.log(w);
+
+		dragHere.hidden = true;
+		
+		for (var i = 0; i < w.data.lists.length; i++) {
+			(function(i) {
+				var list = w.data.lists[i];
+				var newEl = document.createElement('li');
+				newEl.innerText = "Import " + list.title;
+
+				newEl.onclick = function() {
+					for (var j = 0; j < w.data.tasks.length; j++) {
+						var task = w.data.tasks[j];
+						if (task.list_id === list.id && task.completed !== true) {
+							AddTask(task.title);
+						}
+					}
+					// @TODO feedback to user
+				};
+
+				listList.appendChild(newEl);
+			})(i);
+		}
+	};
+
+	reader.readAsText(file);
+
+	return false;
+}
+
+closeImporter.onclick = function() {
+	importer.hidden = true;
+};

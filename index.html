@@ -29,6 +29,10 @@
 			<button id="logoutButton">Log out</button>
 		</div>
 
+		<div id="userMenu" tabindex="-1" hidden>
+			<button id="importButton">Import from Wunderlist…</button>
+		</div>
+
 		<div class="workstations">
 			<div class="select">
 				<div id="curWorkstationDiv" title="Current workstation"></div>
@@ -78,6 +82,13 @@
 			<hr />
 			<button id="deleteTask" class="delete">Delete</button>
 		</div>
+	</div>
+
+	<div id="importer" hidden>
+		<h2>Import from Wunderlist</h2>
+		<button id="closeImporter">×</button>
+		<p id="dragHere">Drag your Wunderlist backup (.json) here</p>
+		<ul id="listList" class="buttons"></ul>
 	</div>
 </div>
 

@@ -160,7 +160,7 @@ html, body {
 	}
 }
 
-#workstationContextMenu, #boardContextMenu, #taskContextMenu {
+#workstationContextMenu, #boardContextMenu, #taskContextMenu, #userMenu {
 	background: #eee;
 	padding: 5px;
 	position: fixed;
@@ -222,6 +222,11 @@ html, body {
 		font-weight: normal;
 		color: #999;
 	}
+}
+
+#userMenu {
+	right: 0;
+	top: 40px;
 }
 
 .boards {
@@ -437,7 +442,7 @@ hr {
 	border-top: 1px solid #bbb;
 }
 
-button {
+button, .buttons li {
 	border: 1px solid #666;
 	padding: 5px 7px;
 	border-radius: 5px;
@@ -449,6 +454,17 @@ button {
 		background: $actionColor;
 		color: white;
 		border-color: $actionColor;
+	}
+}
+
+.buttons {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	li {
+		margin: 5px 0 0;
+		padding: 10px 15px;
 	}
 }
 
@@ -525,4 +541,48 @@ label:last-child span {
 	label {
 		border-color: #bbb;
 	}
+}
+
+#importer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: #ddd;
+	padding: 20px;
+	box-sizing: border-box;
+	max-height: 50%;
+	overflow-y: auto;
+
+	h2 {
+		font-size: 1.2em;
+		color: #666;
+		font-weight: normal;
+		margin: 0 0 10px;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	#dragHere {
+		border: 2px dashed #999;
+		padding: 40px;
+		text-align: center;
+		font-size: 1.4em;
+	}
+
+	&.active #dragHere {
+		border-color: $actionColor;
+	}
+}
+
+#closeImporter {
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	border: none;
+	height: 32px;
+	width: 32px;
+	
 }
