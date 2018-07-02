@@ -31,14 +31,15 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 #workstationSelectionDiv input { width: calc(100% - 10px); box-sizing: border-box; padding: 5px; margin: 5px; }
 
 #workstationContextMenu, #boardContextMenu, #taskContextMenu, #userMenu { background: #eee; padding: 5px; position: fixed; min-width: 200px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); }
-#workstationContextMenu button, #boardContextMenu button, #taskContextMenu button, #userMenu button { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; transition: background-color 0.1s, color 0.1s; }
-#workstationContextMenu button:hover, #workstationContextMenu button:focus, #boardContextMenu button:hover, #boardContextMenu button:focus, #taskContextMenu button:hover, #taskContextMenu button:focus, #userMenu button:hover, #userMenu button:focus { background: #009688; color: white; }
-#workstationContextMenu button.selected, #boardContextMenu button.selected, #taskContextMenu button.selected, #userMenu button.selected { background: #ddd; /*color: white;*/ position: relative; color: black; /*&:hover::before {
+#workstationContextMenu button, #workstationContextMenu label, #boardContextMenu button, #boardContextMenu label, #taskContextMenu button, #taskContextMenu label, #userMenu button, #userMenu label { display: block; width: 100%; background: none; border: none; padding: 8px; text-align: left; padding-left: 25px; border-radius: unset; transition: background-color 0.1s, color 0.1s; box-sizing: border-box; }
+#workstationContextMenu button:hover, #workstationContextMenu button:focus, #workstationContextMenu label:hover, #workstationContextMenu label:focus, #boardContextMenu button:hover, #boardContextMenu button:focus, #boardContextMenu label:hover, #boardContextMenu label:focus, #taskContextMenu button:hover, #taskContextMenu button:focus, #taskContextMenu label:hover, #taskContextMenu label:focus, #userMenu button:hover, #userMenu button:focus, #userMenu label:hover, #userMenu label:focus { background: #009688; color: white; }
+#workstationContextMenu button.selected, #workstationContextMenu label.selected, #boardContextMenu button.selected, #boardContextMenu label.selected, #taskContextMenu button.selected, #taskContextMenu label.selected, #userMenu button.selected, #userMenu label.selected { background: #ddd; /*color: white;*/ position: relative; color: black; /*&:hover::before {
 	background: white;
 }*/ }
-#workstationContextMenu button.selected::before, #boardContextMenu button.selected::before, #taskContextMenu button.selected::before, #userMenu button.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
-#workstationContextMenu button.delete:hover, #boardContextMenu button.delete:hover, #taskContextMenu button.delete:hover, #userMenu button.delete:hover { background: #BF3C25; }
-#workstationContextMenu button[hidden], #boardContextMenu button[hidden], #taskContextMenu button[hidden], #userMenu button[hidden] { display: none; }
+#workstationContextMenu button.selected::before, #workstationContextMenu label.selected::before, #boardContextMenu button.selected::before, #boardContextMenu label.selected::before, #taskContextMenu button.selected::before, #taskContextMenu label.selected::before, #userMenu button.selected::before, #userMenu label.selected::before { position: absolute; left: 10px; top: 12px; content: ' '; /*border: 1px solid black;*/ background: black; width: 6px; height: 6px; border-radius: 8px; }
+#workstationContextMenu button.delete:hover, #workstationContextMenu label.delete:hover, #boardContextMenu button.delete:hover, #boardContextMenu label.delete:hover, #taskContextMenu button.delete:hover, #taskContextMenu label.delete:hover, #userMenu button.delete:hover, #userMenu label.delete:hover { background: #BF3C25; }
+#workstationContextMenu button[hidden], #workstationContextMenu label[hidden], #boardContextMenu button[hidden], #boardContextMenu label[hidden], #taskContextMenu button[hidden], #taskContextMenu label[hidden], #userMenu button[hidden], #userMenu label[hidden] { display: none; }
+#workstationContextMenu input[type=checkbox], #boardContextMenu input[type=checkbox], #taskContextMenu input[type=checkbox], #userMenu input[type=checkbox] { position: absolute; left: 8px; }
 #workstationContextMenu h4, #boardContextMenu h4, #taskContextMenu h4, #userMenu h4 { margin: 5px 5px; padding: 0; font-size: 11px; font-weight: normal; color: #999; }
 
 #userMenu { right: 0; top: 40px; }
@@ -93,6 +94,8 @@ button:hover, button:focus, .buttons li:hover, .buttons li:focus { background: #
 input { padding: 5px; background: white; border: 1px solid #bbb; min-width: 200px; transition: background-color 0.1s; }
 input:hover { background: #f1f1f1; }
 input:focus { background: white; }
+
+input[type=checkbox] { min-width: unset; }
 
 label { margin: 0; padding: 2px 1px; display: inline-block; border-top: 2px solid #009688; border-bottom: 2px solid #009688; transition: border-color 0.2s; }
 label:first-child { padding-left: 2px; border-left: 2px solid #009688; border-radius: 8px 0 0 8px; }

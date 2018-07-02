@@ -167,7 +167,7 @@ html, body {
 	min-width: 200px;
 	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
 
-	button {
+	button, label {
 		display: block;
 		width: 100%;
 		background: none;
@@ -177,6 +177,7 @@ html, body {
 		padding-left: 25px;
 		border-radius: unset;
 		transition: background-color 0.1s, color 0.1s;
+		box-sizing: border-box;
 
 		&:hover, &:focus {
 			background: $actionColor;
@@ -213,6 +214,10 @@ html, body {
 		&[hidden] {
 			display: none;
 		}
+	}
+	input[type=checkbox] {
+		position: absolute;
+		left: 8px;
 	}
 
 	h4 {
@@ -482,6 +487,9 @@ input {
 	&:focus {
 		background: white;
 	}
+}
+input[type=checkbox] {
+	min-width: unset;
 }
 
 label {
