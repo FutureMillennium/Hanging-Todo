@@ -320,7 +320,7 @@ function ChangeBoard(thisBoard) {
 						SetClass(workstationButtons, '');
 						workstationButtons[task.workstation].className = 'selected';
 
-						if (task.status === 2 || task.status === 3) {
+						if (statuses[task.status].done === 1) {
 							repeatTask.onclick = function() {
 								SetTaskStatus(task, 1);
 								taskContextMenu.FocusOut(null);
@@ -332,6 +332,14 @@ function ChangeBoard(thisBoard) {
 						} else {
 							repeatTask.hidden = true;
 							repeatTask.nextSibling.hidden = true;
+						}
+
+						if (statuses[task.status].done === 0) {
+							focusedLabel.hidden = false;
+							focusedLabel.nextSibling.hidden = false;
+						} else {
+							focusedLabel.hidden = true;
+							focusedLabel.nextSibling.hidden = true;
 						}
 
 						ShowContextMenu(taskContextMenu, e);
