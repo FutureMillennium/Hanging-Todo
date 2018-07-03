@@ -473,10 +473,15 @@ function ChangeBoard(thisBoard) {
 					
 					if (task.status !== data.status) {
 						thisBoard.uls[data.status].appendChild(task.li);
+						thisBoard.tasksByStatus[task.status].splice(thisBoard.tasksByStatus[task.status].indexOf(task), 1);
+						task.status = data.status;
+
+						if (thisBoard.tasksByStatus.hasOwnProperty(task.status) === false) {
+							thisBoard.tasksByStatus[task.status] = []; }
+						thisBoard.tasksByStatus[task.status].push(task);
 					}
 
 					task.name = data.name;
-					task.status = data.status;
 					task.workstation = data.workstation;
 
 					UpdateTask(task);
@@ -803,6 +808,10 @@ function Go() {
 								this.nextSibling.hidden = true;
 							}
 						};
+						thisBoard.hs[si].oncontextmenu = function(e) {
+							ShowContextMenu(statusContextMenu, e);
+							return false;
+						};
 					}
 
 					thisBoard.uls[si] = document.createElement('ul');
@@ -916,6 +925,7 @@ ContextMenuInit(userMenu);
 ContextMenuInit(workstationContextMenu);
 ContextMenuInit(boardContextMenu);
 ContextMenuInit(taskContextMenu);
+ContextMenuInit(statusContextMenu);
 
 deleteTask.onclick = function(e) {
 	for (var task of selection) {
@@ -1042,6 +1052,10 @@ importer.ondrop = function(ev) {
 closeImporter.onclick = function() {
 	importer.hidden = true;
 	tasksDiv.classList.remove('importershown');
+};
+
+editStatuses.onclick = function() {
+	statusContextMenu.FocusOut(null);
 };
 
 document.onkeydown = function(e) {
