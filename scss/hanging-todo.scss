@@ -474,6 +474,14 @@ button, .buttons li {
 		color: white;
 		border-color: $actionColor;
 	}
+
+	&.delete {
+		border-color: $deleteColor !important;
+
+		&:hover {
+			background-color: $deleteColor !important;
+		}
+	}
 }
 
 .buttons {
@@ -506,62 +514,64 @@ input[type=checkbox] {
 	min-width: unset;
 }
 
-label {
-	margin: 0;
-	padding: 2px 1px;
-	display: inline-block;
-	border-top: 2px solid $actionColor;
-	border-bottom: 2px solid $actionColor;
-	transition: border-color 0.2s;
-
-	&:first-child {
-		padding-left: 2px;
-		border-left: 2px solid $actionColor;
-		border-radius: 8px 0 0 8px;
-	}
-	&:last-child {
-		padding-right: 2px;
-		border-right: 2px solid $actionColor;
-		border-radius: 0 8px 8px 0;
-	}
-}
-input[type=radio] {
-	display: none;
-	/* -webkit-appearance: none; */
-}
-label span {
-	display: block;
-	padding: 5px 12px;
-	color: $actionColor;
-	transition: background-color 0.1s, color 0.1s;
-
-	&:hover {
-		color: white;
-		background: $actionColor;
-	}
-}
-input {
-	&:checked + span {
-		background: $actionColor;
-		color: #fff;
-	}
-	&.default:checked + span {
-		background: #bbb;
-	}
-	&.default + span:hover {
-		background: #bbb;
-	}
-}
-label:first-child span {
-	border-radius: 6px 0 0 6px;
-}
-label:last-child span {
-	border-radius: 0 6px 6px 0;
-}
-
-.default {
+.radios {
 	label {
-		border-color: #bbb;
+		margin: 0;
+		padding: 2px 1px;
+		display: inline-block;
+		border-top: 2px solid $actionColor;
+		border-bottom: 2px solid $actionColor;
+		transition: border-color 0.2s;
+
+		&:first-child {
+			padding-left: 2px;
+			border-left: 2px solid $actionColor;
+			border-radius: 8px 0 0 8px;
+		}
+		&:last-child {
+			padding-right: 2px;
+			border-right: 2px solid $actionColor;
+			border-radius: 0 8px 8px 0;
+		}
+	}
+	input[type=radio] {
+		display: none;
+		/* -webkit-appearance: none; */
+	}
+	label span {
+		display: block;
+		padding: 5px 12px;
+		color: $actionColor;
+		transition: background-color 0.1s, color 0.1s;
+
+		&:hover {
+			color: white;
+			background: $actionColor;
+		}
+	}
+	input {
+		&:checked + span {
+			background: $actionColor;
+			color: #fff;
+		}
+		&.default:checked + span {
+			background: #bbb;
+		}
+		&.default + span:hover {
+			background: #bbb;
+		}
+	}
+	label:first-child span {
+		border-radius: 6px 0 0 6px;
+	}
+	label:last-child span {
+		border-radius: 0 6px 6px 0;
+	}
+
+	&.default {
+		label {
+			border-color: #bbb;
+		}
 	}
 }
 
@@ -608,4 +618,78 @@ label:last-child span {
 	height: 32px;
 	width: 32px;
 	
+}
+
+#statusEdit {
+	position: fixed;
+	background: #00000088;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 150;
+	display: flex;
+	overflow-y: auto;
+	padding: 20px;
+
+	&[hidden] {
+		display: none;
+	}
+
+	> div {
+		background: white;
+		border-radius: 15px;
+		padding: 35px;
+		box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
+		margin: auto;
+	}
+
+	.radios {
+		margin: 0 10px;
+		display: inline-block;
+
+		&.hidden {
+			visibility: hidden;
+		}
+	}
+
+	.drag {
+		padding: 0;
+		border: 1px solid #666;
+		width: 32px;
+		height: 32px;
+		box-sizing: border-box;
+		vertical-align: middle;
+		margin: 0 10px 0 0;
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+
+	ul {
+		margin-bottom: 20px;
+	}
+
+	li button {
+		margin-left: 20px;
+		color: #666;
+
+		&.delete {
+			color: $deleteColor;
+		}
+	}
+}
+
+#cancelStatusEdit, #saveStatusEdit {
+	border-radius: 10px;
+	padding: 15px 20px;
+}
+
+#cancelStatusEdit {
+
+}
+
+#saveStatusEdit {
+	float: right;
 }

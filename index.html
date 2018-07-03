@@ -69,7 +69,7 @@
 	<div id="tasksDiv" hidden>
 		<div class="addtask">
 			<input type="text" name="newtask" placeholder="Add task" id="addTaskInput" />
-			<div id="taskWorkstationSelect" hidden class="default" title="Only show this task on this workstation">
+			<div id="taskWorkstationSelect" hidden class="default radios" title="Only show this task on this workstation">
 				<label><input type="radio" name="workstation" value="0" checked class="default" /><span> (any)</span></label><label><input type="radio" name="workstation" value="1" id="curWorkstationRadio" /><span></span></label>
 			</div>
 		</div>
@@ -87,6 +87,12 @@
 		<div id="statusContextMenu" tabindex="-1" hidden>
 			<button id="editStatuses">Edit…</button>
 		</div>
+
+		<div id="statusEdit" hidden><div>
+			<ul id="statusUl"></ul>
+			<button id="cancelStatusEdit" class="delete">Cancel</button>
+			<button id="saveStatusEdit">Save</button>
+		</div></div>
 	</div>
 
 	<div id="importer" hidden>
