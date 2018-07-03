@@ -31,7 +31,9 @@ var workstationButtons = {};
 
 var statusButtons = {};
 
-var selection = null;
+var selection = [];
+
+var isCtrlDown = false;
 
 var config = {
 	apiKey: 'AIzaSyBPe-tuk-D9VeigholrdFkRdJ8sxe72zaY',
@@ -57,6 +59,39 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+
+function Select(task) {
+	selection.forEach(function(selItem) {
+		selItem.li.classList.remove('selected'); });
+	selection = [task];
+	task.li.classList.add('selected');
+}
+
+function Deselect(task) {
+	var i = selection.indexOf(task);
+	selection[i].li.classList.remove('selected');
+	selection.splice(i, 1);
+}
+
+function DeselectAll() {
+	console.log('DeselectAll()');
+	if (selection.length > 0) {
+		selection.forEach(function(selItem) {
+			selItem.li.classList.remove('selected'); });
+		selection = [];
+	}
+}
+
+function FocusDefault(e) {
+	/*if (selection.length > 0) {
+		e.preventDefault();
+		selection[0].li.focus();
+	} else {
+		taskContextMenu.blur();
+	}*/
+	taskContextMenu.FocusOut(null);
+	return false;
+}
 
 function AddTask(name, status, workstation) {
 	if (status === undefined)
@@ -122,9 +157,11 @@ function AddWorkstationButton(id, title) {
 	var button = document.createElement('button');
 	button.innerText = (title === undefined ? id : title);
 	button.onclick = function() {
-		selection.doc.ref.set({
-			workstation: id,
-		}, { merge: true }); // @TODO @low onerror
+		selection.forEach(function(task) {
+			task.doc.ref.set({
+				workstation: id,
+			}, { merge: true }); // @TODO @low onerror
+		});
 		button.parentElement.hidden = true;
 	};
 
@@ -147,9 +184,18 @@ function ContextMenuInit(el) {
 				lastWorkstation.el.classList.remove('menuon');
 			if (lastBoard !== null)
 				lastBoard.el.classList.remove('menuon');
-			if (selection !== null) {
-				selection.li.classList.remove('selected');
-				selection = null;
+			if (isCtrlDown === false && selection.length === 1) {
+				var found = false;
+				if (e !== null)
+					for (var s of selection) {
+						if (e.relatedTarget === s.li || s.li.contains(e.relatedTarget)) {
+							found = true;
+							break;
+						}
+					}
+
+				if (found === false)
+					DeselectAll();
 			}
 		}
 	};
@@ -180,15 +226,14 @@ function ShowContextMenu(el, e) {
 
 function CountTasks(board) {
 	var count = 0;
-	for (var i = 0; i < board.taskArray.length; i++) {
-		var task = board.taskArray[i];
-		if (task.status === 1) {
+	if (board.tasksByStatus.hasOwnProperty(1))
+		for (var i = 0; i < board.tasksByStatus[1].length; i++) {
+			var task = board.tasksByStatus[1][i];
 			if (task.workstation !== '' 
 				&& (curWorkstation === null || curWorkstation.id !== task.workstation)) {
 			} else {
 				count++; }
 		}
-	}
 
 	if (count > 0) {
 		document.title = "(" + count + ") " + appTitle;
@@ -228,8 +273,8 @@ function ChangeWorkstation(workstation) {
 		workstation.el.classList.add('selected');
 	}
 
-	if (curBoard !== null) for (var i in curBoard.taskArray) {
-		var task = curBoard.taskArray[i];
+	if (curBoard !== null) for (var i in curBoard.tasks) {
+		var task = curBoard.tasks[i];
 		UpdateTaskWorkstation(task);
 	}
 
@@ -270,7 +315,10 @@ function ChangeBoard(thisBoard) {
 					};
 
 					thisBoard.tasks[doc.id] = task;
-					thisBoard.taskArray.push(task);
+
+					if (thisBoard.tasksByStatus.hasOwnProperty(task.status) === false) {
+						thisBoard.tasksByStatus[task.status] = []; }
+					thisBoard.tasksByStatus[task.status].push(task);
 
 					var completeButton = document.createElement('button');
 					completeButton.innerText = "✓";
@@ -291,28 +339,46 @@ function ChangeBoard(thisBoard) {
 
 					UpdateTask(task);
 
-					newEl.onclick = function() {
-						if (document.activeElement === task.li && selection === task) {
-							task.li.classList.add('selected');
-							InitRename(task, function() { task.li.classList.remove('selected'); });
+					newEl.onmousedown = function(e) {
+						if (e.ctrlKey === true) {
+							if (e.button !== 0)
+								return;
+
+							if (selection.indexOf(task) === -1) {
+								task.li.classList.add('selected');
+								selection.push(task);
+								//console.log('onmousedown: ctrlKey: select', task, selection);
+							} else {
+								Deselect(task);
+								task.li.blur();
+								e.preventDefault();
+								//console.log('onmousedown: ctrlKey: deselect', task, selection);
+							}
+						} else if (selection.indexOf(task) !== -1) {
+							if (e.button === 0 && document.activeElement === task.li && task.el.contentEditable !== 'plaintext-only') {
+								e.preventDefault();
+								InitRename(task); // @TODO don't if was just renaming
+							}
 						} else {
-							selection = task;
+							Select(task);
 						}
 					};
+					newEl.onclick = function(e) {
+						
+					};
 					newEl.oncontextmenu = function(e) {
-						deleteTask.onclick = function() {
+						if (selection.indexOf(task) === -1) {
+							Select(task);
+						}
+
+						deleteTask.onclick = function(e) {
 							task.doc.ref.delete()/*.then(function() {
 								//console.log("Document successfully deleted!");
 							})*/.catch(function(error) {
 								console.error("Error removing document: ", error);
 							});
-							taskContextMenu.FocusOut(null);
-							return false;
+							return FocusDefault(e);
 						};
-						if (selection !== null)
-							selection.li.classList.remove('selected');	
-						selection = task;
-						selection.li.classList.add('selected');
 
 						SetClass(statusButtons, '');
 						statusButtons[task.status].className = 'selected';
@@ -321,10 +387,9 @@ function ChangeBoard(thisBoard) {
 						workstationButtons[task.workstation].className = 'selected';
 
 						if (statuses[task.status].done === 1) {
-							repeatTask.onclick = function() {
+							repeatTask.onclick = function(e) {
 								SetTaskStatus(task, 1);
-								taskContextMenu.FocusOut(null);
-								return false;
+								return FocusDefault(e);
 							};
 
 							repeatTask.hidden = false;
@@ -345,9 +410,24 @@ function ChangeBoard(thisBoard) {
 						ShowContextMenu(taskContextMenu, e);
 						return false;
 					};
-					newEl.addEventListener('focusout', function() {
-						if (selection !== null && selection.li.classList.contains('selected') === false)
-							selection = null;
+					newEl.addEventListener('focusout', function(e) {
+						if (isCtrlDown)
+							return;
+						if (selection.length === 0)
+							return;
+						if (e.relatedTarget === taskContextMenu)
+							return;
+						if (newEl.contains(e.relatedTarget))
+							return;
+
+						for (var s of selection) {
+							if (e.relatedTarget === s.li) {
+								return;
+							}
+						}
+
+						DeselectAll();
+						console.log('focusout: DeselectAll()');
 					});
 
 					UpdateTaskWorkstation(task);
@@ -376,7 +456,7 @@ function ChangeBoard(thisBoard) {
 
 					task.li.remove();
 
-					thisBoard.taskArray.splice(thisBoard.taskArray.indexOf(task), 1);
+					thisBoard.tasksByStatus[task.status].splice(thisBoard.tasksByStatus[task.status].indexOf(task), 1);
 					delete thisBoard.tasks[change.doc.id];
 
 					//console.log("removed: ", change, change.doc.data());
@@ -621,7 +701,7 @@ function Go() {
 					uls: {},
 					hs: {},
 					tasks: {},
-					taskArray: [],
+					tasksByStatus: {},
 					//loaded: false,
 				};
 
@@ -808,9 +888,9 @@ ContextMenuInit(taskContextMenu);
 function CreateStatusButton(status, name) {
 	var button = document.createElement('button');
 	button.innerText = name;
-	button.onclick = function() {
-		SetTaskStatus(selection, status);
-		button.parentElement.hidden = true;
+	button.onclick = function(e) {
+		selection.forEach(function(task) { SetTaskStatus(task, status); });
+		return FocusDefault(e);
 	};
 
 	statusButtons[status] = button;
@@ -917,3 +997,13 @@ importer.ondrop = function(ev) {
 closeImporter.onclick = function() {
 	importer.hidden = true;
 };
+
+document.onkeydown = function(e) {
+	if (e.ctrlKey)
+		isCtrlDown = true;
+}
+
+document.onkeyup = function(e) {
+	if (e.ctrlKey === false)
+		isCtrlDown = false;
+}
