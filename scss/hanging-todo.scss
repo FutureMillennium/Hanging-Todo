@@ -303,7 +303,7 @@ html, body {
 
 #tasksDiv {
 	margin: 15px;
-	
+
 	&.importershown {
 		margin-bottom: calc(50vh + 15px);
 	}
@@ -351,7 +351,12 @@ html, body {
 			background: #e2e2e2 !important;
 		}
 
-		&:focus, &.selected {
+		&:focus {
+			background: #e0d1be !important;
+			outline: none;
+		}
+
+		&.selected {
 			background: #bee0dd !important;
 			outline: none;
 		}

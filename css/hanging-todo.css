@@ -67,7 +67,8 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 #tasksDiv ul.Cancelled li button { border-color: #00000033; }
 #tasksDiv li { margin: 5px 0; padding: 5px; background: #f1f1f1; cursor: default; border-radius: 10px; transition: background-color 0.1s, color 0.1s; }
 #tasksDiv li:hover { background: #e2e2e2 !important; }
-#tasksDiv li:focus, #tasksDiv li.selected { background: #bee0dd !important; outline: none; }
+#tasksDiv li:focus { background: #e0d1be !important; outline: none; }
+#tasksDiv li.selected { background: #bee0dd !important; outline: none; }
 #tasksDiv li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #00000066; }
 #tasksDiv li button:hover, #tasksDiv li button:focus { color: white !important; border-color: #009688; }
 #tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }

@@ -34,6 +34,7 @@ var statusButtons = {};
 var selection = [];
 
 var isCtrlDown = false;
+var isShiftDown = false;
 var addingToSelection = 0;
 
 var config = {
@@ -61,8 +62,10 @@ function SetSetting(setting, value) {
 }
 
 function AddSelection(task) {
-	task.li.classList.add('selected');
-	selection.push(task);
+	if (selection.indexOf(task) === -1) {
+		task.li.classList.add('selected');
+		selection.push(task);
+	}
 }
 
 function Select(task) {
@@ -79,7 +82,7 @@ function Deselect(task) {
 }
 
 function DeselectAll() {
-	console.log('DeselectAll()');
+	//console.log('DeselectAll()');
 	if (selection.length > 0) {
 		selection.forEach(function(selItem) {
 			selItem.li.classList.remove('selected'); });
@@ -345,7 +348,35 @@ function ChangeBoard(thisBoard) {
 					UpdateTask(task);
 
 					newEl.onmousedown = function(e) {
-						if (e.ctrlKey === true) {
+						if (e.shiftKey === true) {
+							if (e.button !== 0)
+								return;
+							
+							if (selection.length > 0 && selection[selection.length - 1].status === task.status) {
+								if (selection.indexOf(task) === -1) {
+									let lastTask = selection[selection.length - 1];
+									let taskList = curBoard.tasksByStatus[lastTask.status];
+									let iStart = taskList.indexOf(lastTask);
+									let iEnd = taskList.indexOf(task);
+
+									if (iStart > iEnd) {
+										let tmp = iStart;
+										iStart = iEnd;
+										iEnd = tmp - 1;
+									} else {
+										iStart += 1;
+									}
+									
+									for (let i = iStart; i <= iEnd; i++) {
+										AddSelection(taskList[i]);
+									}
+								}
+
+							} else {
+								Select(task);
+							}
+
+						} else if (e.ctrlKey === true) {
 							if (e.button !== 0)
 								return;
 
@@ -406,7 +437,8 @@ function ChangeBoard(thisBoard) {
 						return false;
 					};
 					newEl.addEventListener('focusout', function(e) {
-						if (isCtrlDown)
+						//console.log('task focusout:', this, e);
+						if (isCtrlDown || isShiftDown)
 							return;
 						if (selection.length === 0)
 							return;
@@ -422,7 +454,7 @@ function ChangeBoard(thisBoard) {
 						}
 
 						DeselectAll();
-						console.log('focusout: DeselectAll()');
+						//console.log('focusout: DeselectAll()');
 					});
 
 					if (addingToSelection > 0) {
@@ -1015,9 +1047,13 @@ closeImporter.onclick = function() {
 document.onkeydown = function(e) {
 	if (e.ctrlKey)
 		isCtrlDown = true;
+	if (e.shiftKey)
+		isShiftDown = true;
 }
 
 document.onkeyup = function(e) {
 	if (e.ctrlKey === false)
 		isCtrlDown = false;
+	if (e.shiftKey === false)
+		isShiftDown = false;
 }
