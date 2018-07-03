@@ -34,6 +34,7 @@ var statusButtons = {};
 var selection = [];
 
 var isCtrlDown = false;
+var addingToSelection = 0;
 
 var config = {
 	apiKey: 'AIzaSyBPe-tuk-D9VeigholrdFkRdJ8sxe72zaY',
@@ -59,6 +60,10 @@ function SetSetting(setting, value) {
 	localStorage.setItem(APP_NAME + setting, value);
 }
 
+function AddSelection(task) {
+	task.li.classList.add('selected');
+	selection.push(task);
+}
 
 function Select(task) {
 	selection.forEach(function(selItem) {
@@ -108,9 +113,9 @@ function AddTask(name, status, workstation) {
 	};
 
 	curBoard.doc.ref.collection('tasks').add(newData)
-		.then(function(docRef) {
+		/*.then(function(docRef) {
 			//console.log(docRef);
-		})
+		})*/
 		.catch(function(error) {
 			console.error("Error writing document: ", error);
 		});
@@ -345,8 +350,7 @@ function ChangeBoard(thisBoard) {
 								return;
 
 							if (selection.indexOf(task) === -1) {
-								task.li.classList.add('selected');
-								selection.push(task);
+								AddSelection(task);
 								//console.log('onmousedown: ctrlKey: select', task, selection);
 							} else {
 								Deselect(task);
@@ -370,15 +374,6 @@ function ChangeBoard(thisBoard) {
 						if (selection.indexOf(task) === -1) {
 							Select(task);
 						}
-
-						deleteTask.onclick = function(e) {
-							task.doc.ref.delete()/*.then(function() {
-								//console.log("Document successfully deleted!");
-							})*/.catch(function(error) {
-								console.error("Error removing document: ", error);
-							});
-							return FocusDefault(e);
-						};
 
 						SetClass(statusButtons, '');
 						statusButtons[task.status].className = 'selected';
@@ -429,6 +424,11 @@ function ChangeBoard(thisBoard) {
 						DeselectAll();
 						console.log('focusout: DeselectAll()');
 					});
+
+					if (addingToSelection > 0) {
+						AddSelection(task);
+						addingToSelection--;
+					}
 
 					UpdateTaskWorkstation(task);
 					thisBoard.uls[task.status].appendChild(newEl);
@@ -885,6 +885,17 @@ ContextMenuInit(workstationContextMenu);
 ContextMenuInit(boardContextMenu);
 ContextMenuInit(taskContextMenu);
 
+deleteTask.onclick = function(e) {
+	for (var task of selection) {
+		task.doc.ref.delete()/*.then(function() {
+			//console.log("Document successfully deleted!");
+		})*/.catch(function(error) {
+			console.error("Error removing document: ", error);
+		});
+	}
+	return FocusDefault(e);
+};
+
 function CreateStatusButton(status, name) {
 	var button = document.createElement('button');
 	button.innerText = name;
@@ -924,6 +935,7 @@ userImg.onclick = function() {
 
 importButton.onclick = function(e) {
 	importer.hidden = false;
+	tasksDiv.classList.add('importershown');
 	userMenu.FocusOut(null);
 };
 
@@ -964,7 +976,7 @@ importer.ondrop = function(ev) {
   
 	reader.onload = function(theFile) {
 		var w = JSON.parse(reader.result);
-		console.log(w);
+		//console.log(w);
 
 		dragHere.hidden = true;
 		
@@ -978,6 +990,7 @@ importer.ondrop = function(ev) {
 					for (var j = 0; j < w.data.tasks.length; j++) {
 						var task = w.data.tasks[j];
 						if (task.list_id === list.id && task.completed !== true) {
+							addingToSelection++;
 							AddTask(task.title);
 						}
 					}
@@ -996,6 +1009,7 @@ importer.ondrop = function(ev) {
 
 closeImporter.onclick = function() {
 	importer.hidden = true;
+	tasksDiv.classList.remove('importershown');
 };
 
 document.onkeydown = function(e) {

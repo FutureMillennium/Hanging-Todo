@@ -166,6 +166,7 @@ html, body {
 	position: fixed;
 	min-width: 200px;
 	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
+	z-index: 100;
 
 	button, label {
 		display: block;
@@ -302,6 +303,10 @@ html, body {
 
 #tasksDiv {
 	margin: 15px;
+	
+	&.importershown {
+		margin-bottom: calc(50vh + 15px);
+	}
 
 	.addtask {
 		margin-bottom: 15px;
@@ -429,6 +434,10 @@ html, body {
 			content: '▲';
 		}
 	}
+}
+
+#importer + #tasksDiv {
+	color: red;
 }
 
 #addTaskInput {
@@ -561,6 +570,7 @@ label:last-child span {
 	box-sizing: border-box;
 	max-height: 50%;
 	overflow-y: auto;
+	z-index: 50;
 
 	h2 {
 		font-size: 1.2em;
