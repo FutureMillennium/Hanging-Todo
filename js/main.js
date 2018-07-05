@@ -1057,15 +1057,71 @@ closeImporter.onclick = function() {
 };
 
 editStatuses.onclick = function() {
-	// @TODO clear
+
+	while (statusUl.firstChild) {
+		statusUl.firstChild.remove();
+	}
+
 	for (let si of statusAr) {
 		let s = statuses[si];
 
 		let statusLi = document.createElement('li');
+		statusLi.status = s;
+		statusLi.iStatus = si;
 
 		let reorderSpan = document.createElement('span');
 		reorderSpan.className = 'drag';
 		reorderSpan.innerText = '·';
+
+		if (si === 1) {
+			reorderSpan.classList.add('disabled');
+		} else {
+			reorderSpan.onmousedown = function(e) {
+
+				let found = null;
+
+				statusLi.classList.add('dragging');
+
+				tasksDiv.onmousemove = function(e) {
+
+					let lastFound = found;
+
+					for (let i = 0; i < statusUl.children.length; i++) {
+						let sLi = statusUl.children[i];
+
+						if (sLi === statusLi)
+							continue;
+
+						let r = sLi.getClientRects()[0];
+						if (e.y > r.bottom - (r.height / 2)) {
+							found = sLi;
+						}
+					}
+
+					if (found !== null)
+						found.classList.add('dragbelow');
+					if (lastFound !== null && lastFound !== found) {
+						lastFound.classList.remove('dragbelow');
+					}
+				};
+				tasksDiv.onmouseup = function(e) {
+					statusLi.classList.remove('dragging');
+
+					if (found !== null) {
+						found.classList.remove('dragbelow');
+						if (found.nextSibling) {
+							statusUl.insertBefore(statusLi, found.nextSibling);
+						} else {
+							statusUl.appendChild(statusLi);
+						}
+					}
+
+					tasksDiv.onmousemove = null;
+					tasksDiv.onmouseup = null;
+				};
+			};
+		}
+
 		statusLi.appendChild(reorderSpan);
 
 		let nameInput = document.createElement('input');
@@ -1093,6 +1149,9 @@ editStatuses.onclick = function() {
 					typeDiv.classList.remove('default');
 			};
 
+			if (si === 1 || si === 2) {
+				radio.disabled = true; }
+
 			let label = document.createElement('label');
 
 			let span = document.createElement('span')
@@ -1105,7 +1164,7 @@ editStatuses.onclick = function() {
 		if (s.done === 0)
 			typeDiv.classList.add('default');
 		if (si === 1 || si === 2) {
-			typeDiv.classList.add('hidden');
+			typeDiv.classList.add('disabled');
 		}
 		statusLi.appendChild(typeDiv);
 
@@ -1125,6 +1184,9 @@ editStatuses.onclick = function() {
 			let deleteButton = document.createElement('button');
 			deleteButton.innerText = "×";
 			deleteButton.className = 'delete';
+			deleteButton.onclick = function() {
+				statusLi.remove();
+			};
 			statusLi.appendChild(deleteButton);
 		}
 

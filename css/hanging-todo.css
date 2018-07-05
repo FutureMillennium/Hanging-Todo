@@ -1,7 +1,7 @@
 @charset "UTF-8";
 html, body, input, button { font-family: sans-serif; font-size: 14px; }
 
-html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; background: white; color: black; }
+html, body { margin: 0; padding: 0; min-height: 100%; background: white; color: black; }
 
 #loaderDiv { position: fixed; display: flex; background: white; color: black; width: 100%; height: 100%; align-items: center; place-content: center; }
 #loaderDiv[hidden] { display: none; }
@@ -90,6 +90,7 @@ html, body { margin: 0; padding: 0; min-height: 100%; -moz-user-select: none; -w
 hr { margin: 5px 0; border: none; border-top: 1px solid #bbb; }
 
 button, .buttons li { border: 1px solid #666; padding: 5px 7px; border-radius: 5px; color: #666; background: none; transition: background-color 0.1s, color 0.1s; }
+button.default, .buttons li.default { border-color: #009688; color: #009688; }
 button:hover, button:focus, .buttons li:hover, .buttons li:focus { background: #009688; color: white; border-color: #009688; }
 button.delete, .buttons li.delete { border-color: #BF3C25 !important; }
 button.delete:hover, .buttons li.delete:hover { background-color: #BF3C25 !important; }
@@ -107,7 +108,7 @@ input[type=checkbox] { min-width: unset; }
 .radios label:first-child { padding-left: 2px; border-left: 2px solid #009688; border-radius: 8px 0 0 8px; }
 .radios label:last-child { padding-right: 2px; border-right: 2px solid #009688; border-radius: 0 8px 8px 0; }
 .radios input[type=radio] { display: none; /* -webkit-appearance: none; */ }
-.radios label span { display: block; padding: 5px 12px; color: #009688; transition: background-color 0.1s, color 0.1s; }
+.radios label span { display: block; padding: 5px 12px; color: #009688; transition: background-color 0.1s, color 0.1s; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; }
 .radios label span:hover { color: white; background: #009688; }
 .radios input:checked + span { background: #009688; color: #fff; }
 .radios input.default:checked + span { background: #bbb; }
@@ -115,6 +116,9 @@ input[type=checkbox] { min-width: unset; }
 .radios label:first-child span { border-radius: 6px 0 0 6px; }
 .radios label:last-child span { border-radius: 0 6px 6px 0; }
 .radios.default label { border-color: #bbb; }
+.radios.disabled label { border-color: transparent; }
+.radios.disabled input + span { visibility: hidden; }
+.radios.disabled input:checked + span { visibility: visible; background-color: #bbb; }
 
 #importer { position: fixed; bottom: 0; left: 0; width: 100%; background: #ddd; padding: 20px; box-sizing: border-box; max-height: 50%; overflow-y: auto; z-index: 50; }
 #importer h2 { font-size: 1.2em; color: #666; font-weight: normal; margin: 0 0 10px; }
@@ -129,12 +133,17 @@ input[type=checkbox] { min-width: unset; }
 #statusEdit > div { background: white; border-radius: 15px; padding: 35px; box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3); margin: auto; }
 #statusEdit .radios { margin: 0 10px; display: inline-block; }
 #statusEdit .radios.hidden { visibility: hidden; }
-#statusEdit .drag { padding: 0; border: 1px solid #666; width: 32px; height: 32px; box-sizing: border-box; vertical-align: middle; margin: 0 10px 0 0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; }
-#statusEdit ul { margin-bottom: 20px; }
-#statusEdit li button { margin-left: 20px; color: #666; }
+#statusEdit .drag { padding: 0; border: 1px solid #666; width: 32px; height: 32px; box-sizing: border-box; vertical-align: middle; margin: 0 10px 0 0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; cursor: move; text-align: center; line-height: 32px; }
+#statusEdit .drag.disabled { cursor: default; border: none; }
+#statusEdit ul { margin-bottom: 10px; }
+#statusEdit button { border-radius: 10px; padding: 15px 20px; }
+#statusEdit li.dragging { opacity: 0.5; }
+#statusEdit li.dragbelow { position: relative; }
+#statusEdit li.dragbelow::after { content: ' '; position: absolute; left: 0; bottom: 0; width: 100%; background: black; height: 2px; }
+#statusEdit li button { margin-left: 20px; color: #666; padding: 5px 7px; border-radius: 5px; }
 #statusEdit li button.delete { color: #BF3C25; }
 
-#cancelStatusEdit, #saveStatusEdit { border-radius: 10px; padding: 15px 20px; }
+#addStatus { margin-bottom: 20px; }
 
 #saveStatusEdit { float: right; }
 

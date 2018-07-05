@@ -9,6 +9,13 @@ $actionColor: #009688;
 	user-select: contain;
 }
 
+@mixin noSelect {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 html, body, input, button {
 	font-family: sans-serif;
 	font-size: 14px;
@@ -18,10 +25,6 @@ html, body {
 	margin: 0;
 	padding: 0;
 	min-height: 100%;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 	background: white;
 	color: black;
 }
@@ -469,6 +472,11 @@ button, .buttons li {
 	background: none;
 	transition: background-color 0.1s, color 0.1s;
 
+	&.default {
+		border-color: $actionColor;
+		color: $actionColor;
+	}
+
 	&:hover, &:focus {
 		background: $actionColor;
 		color: white;
@@ -543,6 +551,7 @@ input[type=checkbox] {
 		padding: 5px 12px;
 		color: $actionColor;
 		transition: background-color 0.1s, color 0.1s;
+		@include noSelect;
 
 		&:hover {
 			color: white;
@@ -571,6 +580,22 @@ input[type=checkbox] {
 	&.default {
 		label {
 			border-color: #bbb;
+		}
+	}
+
+	&.disabled {
+		label {
+			border-color: transparent;
+		}
+
+		input {
+			& + span {
+				visibility: hidden;
+			}
+			&:checked + span {
+				visibility: visible;
+				background-color: #bbb;
+			}
 		}
 	}
 }
@@ -665,31 +690,59 @@ input[type=checkbox] {
 		-webkit-user-select: none;
 		-ms-user-select: none;
 		user-select: none;
+		cursor: move;
+		text-align: center;
+		line-height: 32px;
+
+		&.disabled {
+			cursor: default;
+			border: none;	
+		}
 	}
 
 	ul {
-		margin-bottom: 20px;
+		margin-bottom: 10px;
 	}
 
-	li button {
-		margin-left: 20px;
-		color: #666;
+	button {
+		border-radius: 10px;
+		padding: 15px 20px;
+	}
 
-		&.delete {
-			color: $deleteColor;
+	li {
+		&.dragging {
+			opacity: 0.5;
+		}
+
+		&.dragbelow {
+			position: relative;
+
+			&::after {
+				content: ' ';
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				width: 100%;
+				background: black;
+				height: 2px;
+			}
+		}
+
+		button {
+			margin-left: 20px;
+			color: #666;
+			padding: 5px 7px;
+			border-radius: 5px;
+
+			&.delete {
+				color: $deleteColor;
+			}
 		}
 	}
 }
-
-#cancelStatusEdit, #saveStatusEdit {
-	border-radius: 10px;
-	padding: 15px 20px;
+#addStatus {
+	margin-bottom: 20px;
 }
-
-#cancelStatusEdit {
-
-}
-
 #saveStatusEdit {
 	float: right;
 }
