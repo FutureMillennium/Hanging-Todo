@@ -43,6 +43,8 @@ var isCtrlDown = false;
 var isShiftDown = false;
 var addingToSelection = 0;
 
+var isBoardModified = false;
+
 var config = {
 	apiKey: 'AIzaSyBPe-tuk-D9VeigholrdFkRdJ8sxe72zaY',
 	authDomain: 'hanging-todo.firebaseapp.com',
@@ -422,7 +424,8 @@ function ChangeBoard(thisBoard) {
 						}
 
 						SetClass(statusButtons, '');
-						statusButtons[task.status].className = 'selected';
+						if (statusButtons.hasOwnProperty(task.status))
+							statusButtons[task.status].className = 'selected';
 
 						SetClass(workstationButtons, '');
 						workstationButtons[task.workstation].className = 'selected';
@@ -478,7 +481,7 @@ function ChangeBoard(thisBoard) {
 					}
 
 					UpdateTaskWorkstation(task);
-					thisBoard.uls[task.status].appendChild(newEl);
+					AppendTaskEl(thisBoard, task.status, newEl);
 				}
 				else if (change.type === "modified") {
 					//console.log("modified: ", change, change.doc.data());
@@ -487,7 +490,7 @@ function ChangeBoard(thisBoard) {
 					var data = change.doc.data();
 					
 					if (task.status !== data.status) {
-						thisBoard.uls[data.status].appendChild(task.li);
+						AppendTaskEl(thisBoard, data.status, task.li);
 						thisBoard.tasksByStatus[task.status].splice(thisBoard.tasksByStatus[task.status].indexOf(task), 1);
 						task.status = data.status;
 
@@ -698,6 +701,55 @@ function AddStatus(si, s) {
 	statusUl.appendChild(statusLi);
 }
 
+function CreateStatusHeader(thisBoard, status) {
+	let h = document.createElement('h3');
+	h.innerText = status.name;
+	h.className = statusClasses[status.done];
+	if (status.expanded === true)
+		h.classList.add('expanded');
+	thisBoard.div.appendChild(h);
+
+	h.onclick = function() {
+		if (this.nextSibling.hidden) {
+			this.classList.add('expanded');
+			this.nextSibling.hidden = false;
+		} else {
+			this.classList.remove('expanded');
+			this.nextSibling.hidden = true;
+		}
+	};
+	h.oncontextmenu = function(e) {
+		ShowContextMenu(statusContextMenu, e);
+		return false;
+	};
+
+	return h;
+}
+
+function CreateStatusUl(thisBoard, status) {
+	let ul = document.createElement('ul');
+	ul.className = statusClasses[status.done];
+	if (status.expanded !== true) {
+		ul.hidden = true; }
+	thisBoard.div.appendChild(ul);
+
+	return ul;
+}
+
+function AppendTaskEl(thisBoard, status, el) {
+	if (thisBoard.uls.hasOwnProperty(status)) {
+		thisBoard.uls[status].appendChild(el);
+	} else {
+		if (thisBoard.hasOwnProperty('unassignedUl') === false) {
+			let unassigned = {name: "(unassigned)", done: 0, expanded: true, };
+			CreateStatusHeader(thisBoard, unassigned);
+			thisBoard.unassignedUl = CreateStatusUl(thisBoard, unassigned);
+		}
+
+		thisBoard.unassignedUl.appendChild(el);
+	}
+}
+
 
 
 appTitle = document.title;
@@ -873,6 +925,8 @@ function Go() {
 				var doc = change.doc;
 				var data = doc.data();
 
+				console.log(change, data);
+
 				if (data.status < 0) {
 					return;
 				}
@@ -950,33 +1004,10 @@ function Go() {
 				for (var i in thisBoard.statusAr) {
 					var si = thisBoard.statusAr[i];
 					if (si !== 1) {
-						thisBoard.hs[si] = document.createElement('h3');
-						thisBoard.hs[si].innerText = thisBoard.statuses[si].name;
-						thisBoard.hs[si].className = statusClasses[thisBoard.statuses[si].done];
-						if (thisBoard.statuses[si].expanded === true)
-							thisBoard.hs[si].classList.add('expanded');
-						thisBoard.div.appendChild(thisBoard.hs[si]);
-
-						thisBoard.hs[si].onclick = function() {
-							if (this.nextSibling.hidden) {
-								this.classList.add('expanded');
-								this.nextSibling.hidden = false;
-							} else {
-								this.classList.remove('expanded');
-								this.nextSibling.hidden = true;
-							}
-						};
-						thisBoard.hs[si].oncontextmenu = function(e) {
-							ShowContextMenu(statusContextMenu, e);
-							return false;
-						};
+						thisBoard.hs[si] = CreateStatusHeader(thisBoard, thisBoard.statuses[si]);
 					}
 
-					thisBoard.uls[si] = document.createElement('ul');
-					thisBoard.uls[si].className = statusClasses[thisBoard.statuses[si].done];
-					if (thisBoard.statuses[si].expanded !== true) {
-						thisBoard.uls[si].hidden = true; }
-					thisBoard.div.appendChild(thisBoard.uls[si]);
+					thisBoard.uls[si] = CreateStatusUl(thisBoard, thisBoard.statuses[si]);
 				}
 
 				tasksDiv.appendChild(thisBoard.div);
@@ -990,6 +1021,8 @@ function Go() {
 				var data = change.doc.data();
 				var board = boards[change.doc.id];
 
+				console.log(change, data);
+
 				if (data.status < 0) {
 					DeleteBoard(board);
 					return;
@@ -997,7 +1030,10 @@ function Go() {
 
 				board.name = data.name;
 				NameBoard(board);
-				//console.log("Modified: ", data);
+
+				if (isBoardModified === true) {
+					window.setTimeout(function() { window.location.reload(); }, 500);
+				}
 			}
 			else if (change.type === "removed") {
 				var board = boards[change.doc.id];
@@ -1247,10 +1283,14 @@ saveStatusEdit.onclick = function() {
 		}
 	}
 
+	isBoardModified = true;
 	curBoard.doc.ref.set({
-		statusAr: newStatusAr,
-		statuses: newStatuses,
-	}, { merge: true });
+			statusAr: newStatusAr,
+			statuses: newStatuses,
+		}, { merge: true })
+		/*.then(function(docRef) {
+			window.location.reload();
+		})*/;
 	statusEdit.hidden = true;
 };
 
