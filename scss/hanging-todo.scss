@@ -696,7 +696,8 @@ input[type=checkbox] {
 
 		&.disabled {
 			cursor: default;
-			border: none;	
+			border: none;
+			visibility: hidden;
 		}
 	}
 

@@ -304,6 +304,15 @@ function ChangeBoard(thisBoard) {
 
 	curBoard = thisBoard;
 
+	while (taskStatuses.firstChild) {
+		taskStatuses.firstChild.remove();
+	}
+
+	for (var i in thisBoard.statusAr) {
+		var si = thisBoard.statusAr[i];
+		CreateStatusButton(si, thisBoard.statuses[si].name);
+	}
+
 	boardArray.forEach(function(board) {
 		board.el.classList.remove('selected');
 	});
@@ -336,7 +345,7 @@ function ChangeBoard(thisBoard) {
 					var completeButton = document.createElement('button');
 					completeButton.innerText = "✓";
 					completeButton.onclick = function(e) {
-						if (statuses[task.status].done === 1) {
+						if (thisBoard.statuses[task.status].done === 1) {
 							SetTaskStatus(task, 1);
 						} else {
 							SetTaskStatus(task, 2);
@@ -417,7 +426,7 @@ function ChangeBoard(thisBoard) {
 						SetClass(workstationButtons, '');
 						workstationButtons[task.workstation].className = 'selected';
 
-						if (statuses[task.status].done === 1) {
+						if (thisBoard.statuses[task.status].done === 1) {
 							repeatTask.onclick = function(e) {
 								SetTaskStatus(task, 1);
 								return FocusDefault(e);
@@ -430,7 +439,7 @@ function ChangeBoard(thisBoard) {
 							repeatTask.nextSibling.hidden = true;
 						}
 
-						if (statuses[task.status].done === 0) {
+						if (thisBoard.statuses[task.status].done === 0) {
 							focusedLabel.hidden = false;
 							focusedLabel.nextSibling.hidden = false;
 						} else {
@@ -559,7 +568,7 @@ function AddStatus(si, s) {
 
 	let reorderSpan = document.createElement('span');
 	reorderSpan.className = 'drag';
-	reorderSpan.innerText = '·';
+	reorderSpan.innerText = '≡';
 
 	if (si === 1) {
 		reorderSpan.classList.add('disabled');
@@ -613,16 +622,20 @@ function AddStatus(si, s) {
 	statusLi.appendChild(reorderSpan);
 
 	let nameInput = document.createElement('input');
+	statusLi.nameInput = nameInput;
 	nameInput.value = s.name;
 	statusLi.appendChild(nameInput);
 
 	let typeDiv = document.createElement('div');
 	typeDiv.className = 'radios';
 
+	statusLi.doneRadios = [];
+
 	for (let ti = 0; ti < statusTypes.length; ti++) {
 		let type = statusTypes[ti];
 
 		let radio = document.createElement('input');
+		statusLi.doneRadios[ti] = radio;
 		radio.name = 'type' + si;
 		radio.type = 'radio';
 		radio.value = ti;
@@ -657,6 +670,7 @@ function AddStatus(si, s) {
 	statusLi.appendChild(typeDiv);
 
 	let expandedInput = document.createElement('input');
+	statusLi.expandedInput = expandedInput;
 	expandedInput.type = 'checkbox';
 	if (s.expanded === true)
 		expandedInput.checked = true;
@@ -875,8 +889,15 @@ function Go() {
 					hs: {},
 					tasks: {},
 					tasksByStatus: {},
+					statusAr: statusAr,
+					statuses: statuses,
 					//loaded: false,
 				};
+
+				if (data.hasOwnProperty('statusAr')) {
+					thisBoard.statusAr = data.statusAr; }
+				if (data.hasOwnProperty('statuses')) {
+					thisBoard.statuses = data.statuses; }
 
 				boards[doc.id] = thisBoard;
 				boardArray.push(thisBoard);
@@ -925,13 +946,13 @@ function Go() {
 				thisBoard.heading.hidden = true;
 				thisBoard.div.appendChild(thisBoard.heading);
 
-				for (var i in statusAr) {
-					var si = statusAr[i];
+				for (var i in thisBoard.statusAr) {
+					var si = thisBoard.statusAr[i];
 					if (si !== 1) {
 						thisBoard.hs[si] = document.createElement('h3');
-						thisBoard.hs[si].innerText = statuses[si].name;
-						thisBoard.hs[si].className = statuses[si].name;
-						if (statuses[si].expanded === true)
+						thisBoard.hs[si].innerText = thisBoard.statuses[si].name;
+						thisBoard.hs[si].className = thisBoard.statuses[si].name;
+						if (thisBoard.statuses[si].expanded === true)
 							thisBoard.hs[si].classList.add('expanded');
 						thisBoard.div.appendChild(thisBoard.hs[si]);
 
@@ -951,8 +972,8 @@ function Go() {
 					}
 
 					thisBoard.uls[si] = document.createElement('ul');
-					thisBoard.uls[si].className = statuses[si].name;
-					if (statuses[si].expanded !== true) {
+					thisBoard.uls[si].className = thisBoard.statuses[si].name;
+					if (thisBoard.statuses[si].expanded !== true) {
 						thisBoard.uls[si].hidden = true; }
 					thisBoard.div.appendChild(thisBoard.uls[si]);
 				}
@@ -964,6 +985,7 @@ function Go() {
 				}
 			}
 			else if (change.type === "modified") {
+				// @TODO if already deleted?
 				var data = change.doc.data();
 				var board = boards[change.doc.id];
 
@@ -1084,12 +1106,7 @@ function CreateStatusButton(status, name) {
 
 	statusButtons[status] = button;
 
-	taskContextMenu.insertBefore(button, taskContextMenu.children[taskContextMenu.children.length - 4]);
-}
-
-for (var i in statusAr) {
-	var si = statusAr[i];
-	CreateStatusButton(si, statuses[si].name);
+	taskStatuses.appendChild(button);
 }
 
 AddWorkstationButton('', '(any)');
@@ -1196,8 +1213,8 @@ editStatuses.onclick = function() {
 		statusUl.firstChild.remove();
 	}
 
-	newStatusAr = statusAr.slice();
-	newStatuses = Object.assign({}, statuses);
+	newStatusAr = curBoard.statusAr.slice();
+	newStatuses = Object.assign({}, curBoard.statuses);
 
 	for (let si of newStatusAr) {
 		let s = newStatuses[si];
@@ -1209,6 +1226,30 @@ editStatuses.onclick = function() {
 };
 
 cancelStatusEdit.onclick = function() {
+	statusEdit.hidden = true;
+};
+
+saveStatusEdit.onclick = function() {
+	newStatusAr = [];
+
+	for (let i = 0; i < statusUl.children.length; i++) {
+		let sLi = statusUl.children[i];
+		let si = sLi.iStatus;
+		newStatusAr.push(sLi.iStatus);
+		newStatuses[si].name = sLi.nameInput.value;
+		newStatuses[si].expanded = sLi.expandedInput.checked;
+		for (let j = 0; j <= 2; j++) {
+			if (sLi.doneRadios[j].checked) {
+				newStatuses[si].done = j;
+				break;
+			}
+		}
+	}
+
+	curBoard.doc.ref.set({
+		statusAr: newStatusAr,
+		statuses: newStatuses,
+	}, { merge: true });
 	statusEdit.hidden = true;
 };
 

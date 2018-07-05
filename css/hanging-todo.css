@@ -134,7 +134,7 @@ input[type=checkbox] { min-width: unset; }
 #statusEdit .radios { margin: 0 10px; display: inline-block; }
 #statusEdit .radios.hidden { visibility: hidden; }
 #statusEdit .drag { padding: 0; border: 1px solid #666; width: 32px; height: 32px; box-sizing: border-box; vertical-align: middle; margin: 0 10px 0 0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none; cursor: move; text-align: center; line-height: 32px; }
-#statusEdit .drag.disabled { cursor: default; border: none; }
+#statusEdit .drag.disabled { cursor: default; border: none; visibility: hidden; }
 #statusEdit ul { margin-bottom: 10px; }
 #statusEdit button { border-radius: 10px; padding: 15px 20px; }
 #statusEdit li.dragging { opacity: 0.5; }
