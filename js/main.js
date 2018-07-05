@@ -16,6 +16,7 @@ var newStatusAr = null;
 var newStatuses = null;
 
 var statusTypes = ["Not done", "Done", "Cancelled"];
+var statusClasses = ["notdone", "done", "cancelled"];
 
 var curUser;
 var db;
@@ -405,7 +406,7 @@ function ChangeBoard(thisBoard) {
 							}
 						} else if (selection.indexOf(task) !== -1) {
 							if (e.button === 0 && document.activeElement === task.li && task.el.contentEditable !== 'plaintext-only') {
-								e.preventDefault();
+								e.preventDefault(); // @TODO prevents selection
 								InitRename(task); // @TODO don't if was just renaming
 							}
 						} else {
@@ -951,7 +952,7 @@ function Go() {
 					if (si !== 1) {
 						thisBoard.hs[si] = document.createElement('h3');
 						thisBoard.hs[si].innerText = thisBoard.statuses[si].name;
-						thisBoard.hs[si].className = thisBoard.statuses[si].name;
+						thisBoard.hs[si].className = statusClasses[thisBoard.statuses[si].done];
 						if (thisBoard.statuses[si].expanded === true)
 							thisBoard.hs[si].classList.add('expanded');
 						thisBoard.div.appendChild(thisBoard.hs[si]);
@@ -972,7 +973,7 @@ function Go() {
 					}
 
 					thisBoard.uls[si] = document.createElement('ul');
-					thisBoard.uls[si].className = thisBoard.statuses[si].name;
+					thisBoard.uls[si].className = statusClasses[thisBoard.statuses[si].done];
 					if (thisBoard.statuses[si].expanded !== true) {
 						thisBoard.uls[si].hidden = true; }
 					thisBoard.div.appendChild(thisBoard.uls[si]);
