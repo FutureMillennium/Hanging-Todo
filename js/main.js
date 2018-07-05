@@ -12,6 +12,9 @@ var statuses = {
 	4: {name: "Cancelled", expanded: false, done: 2, },
 };
 
+var newStatusAr = null;
+var newStatuses = null;
+
 var statusTypes = ["Not done", "Done", "Cancelled"];
 
 var curUser;
@@ -549,6 +552,137 @@ function InitRename(item, afterFn) {
 	};
 }
 
+function AddStatus(si, s) {
+	let statusLi = document.createElement('li');
+	statusLi.status = s;
+	statusLi.iStatus = si;
+
+	let reorderSpan = document.createElement('span');
+	reorderSpan.className = 'drag';
+	reorderSpan.innerText = '·';
+
+	if (si === 1) {
+		reorderSpan.classList.add('disabled');
+	} else {
+		reorderSpan.onmousedown = function(e) {
+
+			let found = null;
+
+			statusLi.classList.add('dragging');
+
+			tasksDiv.onmousemove = function(e) {
+
+				let lastFound = found;
+
+				for (let i = 0; i < statusUl.children.length; i++) {
+					let sLi = statusUl.children[i];
+
+					if (sLi === statusLi)
+						continue;
+
+					let r = sLi.getClientRects()[0];
+					if (e.y > r.bottom - (r.height / 2)) {
+						found = sLi;
+					}
+				}
+
+				if (found !== null)
+					found.classList.add('dragbelow');
+				if (lastFound !== null && lastFound !== found) {
+					lastFound.classList.remove('dragbelow');
+				}
+			};
+			tasksDiv.onmouseup = function(e) {
+				statusLi.classList.remove('dragging');
+
+				if (found !== null) {
+					found.classList.remove('dragbelow');
+					if (found.nextSibling) {
+						statusUl.insertBefore(statusLi, found.nextSibling);
+					} else {
+						statusUl.appendChild(statusLi);
+					}
+				}
+
+				tasksDiv.onmousemove = null;
+				tasksDiv.onmouseup = null;
+			};
+		};
+	}
+
+	statusLi.appendChild(reorderSpan);
+
+	let nameInput = document.createElement('input');
+	nameInput.value = s.name;
+	statusLi.appendChild(nameInput);
+
+	let typeDiv = document.createElement('div');
+	typeDiv.className = 'radios';
+
+	for (let ti = 0; ti < statusTypes.length; ti++) {
+		let type = statusTypes[ti];
+
+		let radio = document.createElement('input');
+		radio.name = 'type' + si;
+		radio.type = 'radio';
+		radio.value = ti;
+		if (ti === 0)
+			radio.className = 'default';
+		if (s.done === ti)
+			radio.checked = true;
+		radio.onchange = function() {
+			if (this.checked && this.value == 0)
+				typeDiv.classList.add('default');
+			else
+				typeDiv.classList.remove('default');
+		};
+
+		if (si === 1 || si === 2) {
+			radio.disabled = true; }
+
+		let label = document.createElement('label');
+
+		let span = document.createElement('span')
+		span.innerText = statusTypes[ti];
+
+		label.appendChild(radio);
+		label.appendChild(span);
+		typeDiv.appendChild(label);
+	}
+	if (s.done === 0)
+		typeDiv.classList.add('default');
+	if (si === 1 || si === 2) {
+		typeDiv.classList.add('disabled');
+	}
+	statusLi.appendChild(typeDiv);
+
+	let expandedInput = document.createElement('input');
+	expandedInput.type = 'checkbox';
+	if (s.expanded === true)
+		expandedInput.checked = true;
+
+	if (si !== 1) {
+		let expandedLabel = document.createElement('label');
+		expandedLabel.appendChild(expandedInput);
+		expandedLabel.appendChild(document.createTextNode('Expanded'));
+		statusLi.appendChild(expandedLabel);
+	}
+
+	if (si !== 1 && si !== 2) {
+		let deleteButton = document.createElement('button');
+		deleteButton.innerText = "×";
+		deleteButton.className = 'delete';
+		deleteButton.onclick = function() {
+			newStatusAr.splice(newStatusAr.indexOf(si), 1);
+			delete newStatuses[si];
+			statusLi.remove();
+		};
+		statusLi.appendChild(deleteButton);
+	}
+
+	statusUl.appendChild(statusLi);
+}
+
 
 
 appTitle = document.title;
@@ -1062,135 +1196,12 @@ editStatuses.onclick = function() {
 		statusUl.firstChild.remove();
 	}
 
-	for (let si of statusAr) {
-		let s = statuses[si];
+	newStatusAr = statusAr.slice();
+	newStatuses = Object.assign({}, statuses);
 
-		let statusLi = document.createElement('li');
-		statusLi.status = s;
-		statusLi.iStatus = si;
-
-		let reorderSpan = document.createElement('span');
-		reorderSpan.className = 'drag';
-		reorderSpan.innerText = '·';
-
-		if (si === 1) {
-			reorderSpan.classList.add('disabled');
-		} else {
-			reorderSpan.onmousedown = function(e) {
-
-				let found = null;
-
-				statusLi.classList.add('dragging');
-
-				tasksDiv.onmousemove = function(e) {
-
-					let lastFound = found;
-
-					for (let i = 0; i < statusUl.children.length; i++) {
-						let sLi = statusUl.children[i];
-
-						if (sLi === statusLi)
-							continue;
-
-						let r = sLi.getClientRects()[0];
-						if (e.y > r.bottom - (r.height / 2)) {
-							found = sLi;
-						}
-					}
-
-					if (found !== null)
-						found.classList.add('dragbelow');
-					if (lastFound !== null && lastFound !== found) {
-						lastFound.classList.remove('dragbelow');
-					}
-				};
-				tasksDiv.onmouseup = function(e) {
-					statusLi.classList.remove('dragging');
-
-					if (found !== null) {
-						found.classList.remove('dragbelow');
-						if (found.nextSibling) {
-							statusUl.insertBefore(statusLi, found.nextSibling);
-						} else {
-							statusUl.appendChild(statusLi);
-						}
-					}
-
-					tasksDiv.onmousemove = null;
-					tasksDiv.onmouseup = null;
-				};
-			};
-		}
-
-		statusLi.appendChild(reorderSpan);
-
-		let nameInput = document.createElement('input');
-		nameInput.value = s.name;
-		statusLi.appendChild(nameInput);
-
-		let typeDiv = document.createElement('div');
-		typeDiv.className = 'radios';
-
-		for (let ti = 0; ti < statusTypes.length; ti++) {
-			let type = statusTypes[ti];
-
-			let radio = document.createElement('input');
-			radio.name = 'type' + si;
-			radio.type = 'radio';
-			radio.value = ti;
-			if (ti === 0)
-				radio.className = 'default';
-			if (s.done === ti)
-				radio.checked = true;
-			radio.onchange = function() {
-				if (this.checked && this.value == 0)
-					typeDiv.classList.add('default');
-				else
-					typeDiv.classList.remove('default');
-			};
-
-			if (si === 1 || si === 2) {
-				radio.disabled = true; }
-
-			let label = document.createElement('label');
-
-			let span = document.createElement('span')
-			span.innerText = statusTypes[ti];
-
-			label.appendChild(radio);
-			label.appendChild(span);
-			typeDiv.appendChild(label);
-		}
-		if (s.done === 0)
-			typeDiv.classList.add('default');
-		if (si === 1 || si === 2) {
-			typeDiv.classList.add('disabled');
-		}
-		statusLi.appendChild(typeDiv);
-
-		let expandedInput = document.createElement('input');
-		expandedInput.type = 'checkbox';
-		if (s.expanded === true)
-			expandedInput.checked = true;
-
-		if (si !== 1) {
-			let expandedLabel = document.createElement('label');
-			expandedLabel.appendChild(expandedInput);
-			expandedLabel.appendChild(document.createTextNode('Expanded'));
-			statusLi.appendChild(expandedLabel);
-		}
-
-		if (si !== 1 && si !== 2) {
-			let deleteButton = document.createElement('button');
-			deleteButton.innerText = "×";
-			deleteButton.className = 'delete';
-			deleteButton.onclick = function() {
-				statusLi.remove();
-			};
-			statusLi.appendChild(deleteButton);
-		}
-
-		statusUl.appendChild(statusLi);
+	for (let si of newStatusAr) {
+		let s = newStatuses[si];
+		AddStatus(si, s);
 	}
 
 	statusEdit.hidden = false;
@@ -1199,6 +1210,18 @@ editStatuses.onclick = function() {
 
 cancelStatusEdit.onclick = function() {
 	statusEdit.hidden = true;
+};
+
+addStatus.onclick = function() {
+	let si = 0;
+	while (newStatusAr.indexOf(si) !== -1) {
+		si++;
+	}
+	newStatusAr.push(si);
+
+	let s = {name: "New", expanded: true, done: 0, };
+	newStatuses[si] = s;
+	AddStatus(si, s);
 };
 
 document.onkeydown = function(e) {
