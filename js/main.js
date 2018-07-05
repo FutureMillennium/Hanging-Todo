@@ -443,13 +443,13 @@ function ChangeBoard(thisBoard) {
 							repeatTask.nextSibling.hidden = true;
 						}
 
-						if (thisBoard.statuses[task.status].done === 0) {
+						/*if (thisBoard.statuses[task.status].done === 0) {
 							focusedLabel.hidden = false;
 							focusedLabel.nextSibling.hidden = false;
 						} else {
 							focusedLabel.hidden = true;
 							focusedLabel.nextSibling.hidden = true;
-						}
+						}*/
 
 						ShowContextMenu(taskContextMenu, e);
 						return false;
