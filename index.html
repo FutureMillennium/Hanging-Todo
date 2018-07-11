@@ -74,6 +74,12 @@
 			</div>
 		</div>
 
+		<div class="toolbar">
+			<div class="radios">
+				<label><input type="radio" name="display" value="0" id="listRadio" checked /><span>List</span></label><label><input type="radio" name="display" value="1" id="kanbanRadio" /><span>Kanban</span></label>
+			</div>
+		</div>
+
 		<div id="taskContextMenu" tabindex="-1" hidden>
 			<button id="repeatTask">Repeat now</button><hr />
 			<!-- <label id="focusedLabel"><input type="checkbox" /> Focused</label><hr /> -->
@@ -88,16 +94,16 @@
 		<div id="statusContextMenu" tabindex="-1" hidden>
 			<button id="editStatuses">Edit…</button>
 		</div>
-
-		<div id="statusEdit" hidden><div>
-			<ul id="statusUl"></ul>
-			<div><button id="addStatus">Add</button></div>
-			<div>
-				<button id="cancelStatusEdit" class="delete">Cancel</button>
-				<button id="saveStatusEdit" class="default">Save</button>
-			</div>
-		</div></div>
 	</div>
+
+	<div id="statusEdit" hidden><div class="tasks">
+		<ul id="statusUl"></ul>
+		<div><button id="addStatus">Add</button></div>
+		<div>
+			<button id="cancelStatusEdit" class="delete">Cancel</button>
+			<button id="saveStatusEdit" class="default">Save</button>
+		</div>
+	</div></div>
 
 	<div id="importer" hidden>
 		<h2>Import from Wunderlist</h2>

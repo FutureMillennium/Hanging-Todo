@@ -58,30 +58,41 @@ html, body { margin: 0; padding: 0; min-height: 100%; background: white; color: 
 #taskWorkstationSelect { display: inline-block; }
 #taskWorkstationSelect[hidden] { display: none; }
 
-#tasksDiv { margin: 15px; }
-#tasksDiv.importershown { margin-bottom: calc(50vh + 15px); }
-#tasksDiv .addtask { margin-bottom: 15px; }
-#tasksDiv ul { list-style: none; margin: 0; padding: 0; }
-#tasksDiv ul.done li { color: #00000066; background: #f9f9f9; }
-#tasksDiv ul.done li button { border-color: #00000033; color: black; }
-#tasksDiv ul.cancelled li { color: #00000055; background: #fafafa; }
-#tasksDiv ul.cancelled li button { border-color: #00000033; }
-#tasksDiv li { margin: 5px 0; padding: 5px; background: #f1f1f1; cursor: default; border-radius: 10px; transition: background-color 0.1s, color 0.1s; }
-#tasksDiv li:hover { background: #e2e2e2 !important; }
-#tasksDiv li:focus { background: #e0d1be !important; outline: none; }
-#tasksDiv li.selected { background: #bee0dd !important; outline: none; }
-#tasksDiv li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #00000066; }
-#tasksDiv li button:focus { color: #009688; border-color: #009688; }
-#tasksDiv li button:hover { color: white !important; border-color: #009688; }
-#tasksDiv li span { display: inline-block; padding: 7px; border: 1px solid transparent; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }
-#tasksDiv li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; color: black; }
-#tasksDiv li i { font-size: 0.8em; color: rgba(0, 0, 0, 0.5); display: inline-block; background: #00968820; padding: 5px; font-style: normal; border-radius: 5px; vertical-align: middle; margin-left: 5px; }
-#tasksDiv h3 { font-size: 1.0em; margin: 15px 0 5px; padding: 7px; transition: background-color 0.1s; }
-#tasksDiv h3.done { color: #666; }
-#tasksDiv h3.cancelled { color: #999; }
-#tasksDiv h3:hover { background: #e2e2e2; }
-#tasksDiv h3::after { display: inline-block; margin-left: 5px; font-size: 9px; content: '▼'; line-height: 18px; border: 1px solid #999; color: #666; text-align: center; border-radius: 12px; width: 20px; height: 20px; box-sizing: border-box; vertical-align: middle; }
-#tasksDiv h3.expanded::after { content: '▲'; }
+#tasksDiv, .tasks { margin: 15px; position: relative; }
+#tasksDiv.importershown, .tasks.importershown { margin-bottom: calc(50vh + 15px); }
+#tasksDiv .addtask, .tasks .addtask { margin-bottom: 15px; }
+#tasksDiv .toolbar, .tasks .toolbar { position: absolute; right: 0; top: 0; }
+#tasksDiv ul, .tasks ul { list-style: none; margin: 0; padding: 0; }
+#tasksDiv ul.done li, .tasks ul.done li { color: #00000066; background: #f9f9f9; }
+#tasksDiv ul.done li button, .tasks ul.done li button { border-color: #00000033; color: black; }
+#tasksDiv ul.cancelled li, .tasks ul.cancelled li { color: #00000055; background: #fafafa; }
+#tasksDiv ul.cancelled li button, .tasks ul.cancelled li button { border-color: #00000033; }
+#tasksDiv li, .tasks li { margin: 5px 0; padding: 5px; background: #f1f1f1; cursor: default; border-radius: 10px; transition: background-color 0.1s, color 0.1s; }
+#tasksDiv li:hover, .tasks li:hover { background: #e2e2e2 !important; }
+#tasksDiv li:focus, .tasks li:focus { background: #e0d1be !important; outline: none; }
+#tasksDiv li.selected, .tasks li.selected { background: #bee0dd !important; outline: none; }
+#tasksDiv li button, .tasks li button { width: 32px; height: 32px; margin-right: 2px; color: transparent; border-color: #00000066; }
+#tasksDiv li button:focus, .tasks li button:focus { color: #009688; border-color: #009688; }
+#tasksDiv li button:hover, .tasks li button:hover { color: white !important; border-color: #009688; }
+#tasksDiv li span, .tasks li span { display: inline-block; padding: 7px; border: 1px solid transparent; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: element; user-select: text; user-select: contain; }
+#tasksDiv li span:focus, .tasks li span:focus { cursor: text; background: white; border-color: #bbb; min-width: 500px; color: black; }
+#tasksDiv li i, .tasks li i { font-size: 0.8em; color: rgba(0, 0, 0, 0.5); display: inline-block; background: #00968820; padding: 5px; font-style: normal; border-radius: 5px; vertical-align: middle; margin-left: 5px; }
+#tasksDiv h3, .tasks h3 { font-size: 1.0em; margin: 15px 0 5px; padding: 7px; transition: background-color 0.1s; }
+#tasksDiv h3.done, .tasks h3.done { color: #666; }
+#tasksDiv h3.cancelled, .tasks h3.cancelled { color: #999; }
+#tasksDiv h3:hover, .tasks h3:hover { background: #e2e2e2; }
+#tasksDiv h3::after, .tasks h3::after { display: inline-block; margin-left: 5px; font-size: 9px; content: '▼'; line-height: 18px; border: 1px solid #999; color: #666; text-align: center; border-radius: 12px; width: 20px; height: 20px; box-sizing: border-box; vertical-align: middle; }
+#tasksDiv h3.expanded::after, .tasks h3.expanded::after { content: '▲'; }
+#tasksDiv h3.default, .tasks h3.default { display: none; }
+
+#tasksDiv.kanban > div { white-space: nowrap; }
+#tasksDiv.kanban section { width: 250px; display: inline-block; vertical-align: top; background: #e8e8e8; border-radius: 15px; padding: 5px; margin: 0 10px 10px 0; }
+#tasksDiv.kanban ul li { margin-bottom: 0; white-space: normal; padding: 11px 7px 7px 44px; position: relative; min-height: 42px; line-height: 1.5; box-sizing: border-box; }
+#tasksDiv.kanban ul li button { position: absolute; left: 5px; top: 5px; }
+#tasksDiv.kanban ul li span { display: inline; min-width: unset; border-width: 0; margin: 0; padding: 0; }
+#tasksDiv.kanban ul li span:focus { border-width: 1px; padding: 5px; margin: -6px; display: block; }
+#tasksDiv.kanban h3 { margin-top: 0; border-radius: 10px; }
+#tasksDiv.kanban h3.default { display: block; }
 
 #importer + #tasksDiv { color: red; }
 

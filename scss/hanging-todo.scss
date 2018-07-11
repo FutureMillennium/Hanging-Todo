@@ -311,8 +311,9 @@ html, body {
 	}
 }
 
-#tasksDiv {
+#tasksDiv, .tasks {
 	margin: 15px;
+	position: relative;
 
 	&.importershown {
 		margin-bottom: calc(50vh + 15px);
@@ -320,6 +321,11 @@ html, body {
 
 	.addtask {
 		margin-bottom: 15px;
+	}
+	.toolbar {
+		position: absolute;
+		right: 0;
+		top: 0;
 	}
 
 	ul {
@@ -452,6 +458,65 @@ html, body {
 
 		&.expanded::after {
 			content: '▲';
+		}
+
+		&.default {
+			display: none;
+		}
+	}
+}
+
+#tasksDiv.kanban {
+
+	& > div {
+		white-space: nowrap;
+	}
+
+	section {
+		width: 250px;
+		display: inline-block;
+		vertical-align: top;
+		background: #e8e8e8;
+		border-radius: 15px;
+		padding: 5px;
+		margin: 0 10px 10px 0;
+	}
+	ul li {
+		margin-bottom: 0;
+		white-space: normal;
+		padding: 11px 7px 7px 44px;
+		position: relative;
+		min-height: 42px;
+		line-height: 1.5;
+		box-sizing: border-box;
+
+		button {
+			position: absolute;
+			left: 5px;
+			top: 5px;
+		}
+
+		span {
+			display: inline;
+			min-width: unset;
+			border-width: 0;
+			margin: 0;
+			padding: 0;
+
+			&:focus {
+				border-width: 1px;
+				padding: 5px;
+				margin: -6px;
+				display: block;
+			}
+		}
+	}
+	h3 {
+		margin-top: 0;
+		border-radius: 10px;
+
+		&.default {
+			display: block;
 		}
 	}
 }

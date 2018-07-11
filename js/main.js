@@ -701,13 +701,23 @@ function AddStatus(si, s) {
 	statusUl.appendChild(statusLi);
 }
 
-function CreateStatusHeader(thisBoard, status) {
+function CreateStatusSection(thisBoard, si) {
+	let el = document.createElement('section');
+	thisBoard.divs[si] = el;
+	thisBoard.div.appendChild(el);
+}
+
+function CreateStatusHeader(thisBoard, status, si) {
 	let h = document.createElement('h3');
 	h.innerText = status.name;
 	h.className = statusClasses[status.done];
-	if (status.expanded === true)
+	if (status.expanded === true || si === 1)
 		h.classList.add('expanded');
-	thisBoard.div.appendChild(h);
+	thisBoard.divs[si].appendChild(h);
+
+	if (si === 1) {
+		h.classList.add('default');
+	}
 
 	h.onclick = function() {
 		if (this.nextSibling.hidden) {
@@ -726,12 +736,12 @@ function CreateStatusHeader(thisBoard, status) {
 	return h;
 }
 
-function CreateStatusUl(thisBoard, status) {
+function CreateStatusUl(thisBoard, status, si) {
 	let ul = document.createElement('ul');
 	ul.className = statusClasses[status.done];
 	if (status.expanded !== true) {
 		ul.hidden = true; }
-	thisBoard.div.appendChild(ul);
+	thisBoard.divs[si].appendChild(ul);
 
 	return ul;
 }
@@ -742,8 +752,8 @@ function AppendTaskEl(thisBoard, status, el) {
 	} else {
 		if (thisBoard.hasOwnProperty('unassignedUl') === false) {
 			let unassigned = {name: "(unassigned)", done: 0, expanded: true, };
-			CreateStatusHeader(thisBoard, unassigned);
-			thisBoard.unassignedUl = CreateStatusUl(thisBoard, unassigned);
+			CreateStatusHeader(thisBoard, unassigned, 'unassigned');
+			thisBoard.unassignedUl = CreateStatusUl(thisBoard, unassigned, 'unassigned');
 		}
 
 		thisBoard.unassignedUl.appendChild(el);
@@ -925,7 +935,7 @@ function Go() {
 				var doc = change.doc;
 				var data = doc.data();
 
-				console.log(change, data);
+				//console.log(change, data);
 
 				if (data.status < 0) {
 					return;
@@ -940,6 +950,7 @@ function Go() {
 					subscription: null,
 					div: document.createElement('div'),
 					heading: document.createElement('h2'),
+					divs: {},
 					uls: {},
 					hs: {},
 					tasks: {},
@@ -1003,11 +1014,12 @@ function Go() {
 
 				for (var i in thisBoard.statusAr) {
 					var si = thisBoard.statusAr[i];
-					if (si !== 1) {
-						thisBoard.hs[si] = CreateStatusHeader(thisBoard, thisBoard.statuses[si]);
-					}
 
-					thisBoard.uls[si] = CreateStatusUl(thisBoard, thisBoard.statuses[si]);
+					CreateStatusSection(thisBoard, si);
+
+					thisBoard.hs[si] = CreateStatusHeader(thisBoard, thisBoard.statuses[si], si);
+
+					thisBoard.uls[si] = CreateStatusUl(thisBoard, thisBoard.statuses[si], si);
 				}
 
 				tasksDiv.appendChild(thisBoard.div);
@@ -1021,7 +1033,7 @@ function Go() {
 				var data = change.doc.data();
 				var board = boards[change.doc.id];
 
-				console.log(change, data);
+				//console.log(change, data);
 
 				if (data.status < 0) {
 					DeleteBoard(board);
@@ -1306,16 +1318,24 @@ addStatus.onclick = function() {
 	AddStatus(si, s);
 };
 
+listRadio.onchange = function(e) {
+	tasksDiv.classList.remove('kanban');
+};
+
+kanbanRadio.onchange = function(e) {
+	tasksDiv.classList.add('kanban');
+};
+
 document.onkeydown = function(e) {
 	if (e.ctrlKey)
 		isCtrlDown = true;
 	if (e.shiftKey)
 		isShiftDown = true;
-}
+};
 
 document.onkeyup = function(e) {
 	if (e.ctrlKey === false)
 		isCtrlDown = false;
 	if (e.shiftKey === false)
 		isShiftDown = false;
-}
+};
