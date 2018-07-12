@@ -583,7 +583,7 @@ function AddStatus(si, s) {
 
 			statusLi.classList.add('dragging');
 
-			tasksDiv.onmousemove = function(e) {
+			statusEdit.onmousemove = function(e) {
 
 				let lastFound = found;
 
@@ -605,7 +605,7 @@ function AddStatus(si, s) {
 					lastFound.classList.remove('dragbelow');
 				}
 			};
-			tasksDiv.onmouseup = function(e) {
+			statusEdit.onmouseup = function(e) {
 				statusLi.classList.remove('dragging');
 
 				if (found !== null) {
@@ -617,8 +617,8 @@ function AddStatus(si, s) {
 					}
 				}
 
-				tasksDiv.onmousemove = null;
-				tasksDiv.onmouseup = null;
+				statusEdit.onmousemove = null;
+				statusEdit.onmouseup = null;
 			};
 		};
 	}
@@ -1320,10 +1320,15 @@ addStatus.onclick = function() {
 
 listRadio.onchange = function(e) {
 	tasksDiv.classList.remove('kanban');
+	tasksDiv.classList.remove('hybrid');
 };
-
 kanbanRadio.onchange = function(e) {
 	tasksDiv.classList.add('kanban');
+	tasksDiv.classList.remove('hybrid');
+};
+hybridRadio.onchange = function(e) {
+	tasksDiv.classList.remove('kanban');
+	tasksDiv.classList.add('hybrid');
 };
 
 document.onkeydown = function(e) {

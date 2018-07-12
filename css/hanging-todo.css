@@ -86,13 +86,15 @@ html, body { margin: 0; padding: 0; min-height: 100%; background: white; color: 
 #tasksDiv h3.default, .tasks h3.default { display: none; }
 
 #tasksDiv.kanban > div { white-space: nowrap; }
-#tasksDiv.kanban section { width: 250px; display: inline-block; vertical-align: top; background: #e8e8e8; border-radius: 15px; padding: 5px; margin: 0 10px 10px 0; }
-#tasksDiv.kanban ul li { margin-bottom: 0; white-space: normal; padding: 11px 7px 7px 44px; position: relative; min-height: 42px; line-height: 1.5; box-sizing: border-box; }
-#tasksDiv.kanban ul li button { position: absolute; left: 5px; top: 5px; }
-#tasksDiv.kanban ul li span { display: inline; min-width: unset; border-width: 0; margin: 0; padding: 0; }
-#tasksDiv.kanban ul li span:focus { border-width: 1px; padding: 5px; margin: -6px; display: block; }
-#tasksDiv.kanban h3 { margin-top: 0; border-radius: 10px; }
-#tasksDiv.kanban h3.default { display: block; }
+
+#tasksDiv.kanban section, #tasksDiv.hybrid section { width: 247px; display: inline-block; vertical-align: top; background: #e8e8e8; border-radius: 15px; padding: 5px; margin: 0 10px 10px 0; }
+#tasksDiv.kanban ul li, #tasksDiv.hybrid ul li { margin-bottom: 0; white-space: normal; padding: 11px 7px 7px 44px; position: relative; min-height: 42px; line-height: 1.5; box-sizing: border-box; }
+#tasksDiv.kanban ul li button, #tasksDiv.hybrid ul li button { position: absolute; left: 5px; top: 5px; }
+#tasksDiv.kanban ul li span, #tasksDiv.hybrid ul li span { display: inline; min-width: unset; border-width: 0; margin: 0; padding: 0; }
+#tasksDiv.kanban ul li span:focus, #tasksDiv.hybrid ul li span:focus { border-width: 1px; padding: 5px; margin: -6px; display: block; }
+#tasksDiv.kanban h3, #tasksDiv.hybrid h3 { margin: 0; border-radius: 10px; position: -webkit-sticky; position: sticky; top: 0; z-index: 10; background: #e8e8e8cc; }
+#tasksDiv.kanban h3.default, #tasksDiv.hybrid h3.default { display: block; }
+#tasksDiv.kanban h3:hover, #tasksDiv.hybrid h3:hover { background: #e2e2e2; }
 
 #importer + #tasksDiv { color: red; }
 
