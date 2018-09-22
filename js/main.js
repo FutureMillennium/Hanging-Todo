@@ -822,6 +822,8 @@ db.enablePersistence()
 function Go() {
 	settingWorkstation = GetSetting('workstation', '');
 	settingBoard = GetSetting('board', '');
+	displayModes[GetSetting('displaymode', 0)].onchange(null);
+	displayModes[GetSetting('displaymode', 0)].checked = true;
 
 	if (settingWorkstation === '')
 		ChangeWorkstation(curWorkstation);
@@ -1318,17 +1320,21 @@ addStatus.onclick = function() {
 	AddStatus(si, s);
 };
 
+var displayModes = [listRadio, kanbanRadio, hybridRadio];
 listRadio.onchange = function(e) {
 	tasksDiv.classList.remove('kanban');
 	tasksDiv.classList.remove('hybrid');
+	SetSetting('displaymode', displayModes.indexOf(this));
 };
 kanbanRadio.onchange = function(e) {
 	tasksDiv.classList.add('kanban');
 	tasksDiv.classList.remove('hybrid');
+	SetSetting('displaymode', displayModes.indexOf(this));
 };
 hybridRadio.onchange = function(e) {
 	tasksDiv.classList.remove('kanban');
 	tasksDiv.classList.add('hybrid');
+	SetSetting('displaymode', displayModes.indexOf(this));
 };
 
 document.onkeydown = function(e) {
